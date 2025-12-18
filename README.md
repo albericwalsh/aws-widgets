@@ -8,9 +8,7 @@ Bibliothèque de Web Components réutilisables pour vos projets front-end.
 
 ### 1. Via module ES
 ```html
-<script type="module">
-  import "aws-widgets/src/index.js";
-</script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script>
 ```
 ### 2. Via npm (optionnel)
 ```bash

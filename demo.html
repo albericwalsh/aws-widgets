@@ -8,6 +8,7 @@
         .container { display: flex; gap: 20px; flex-wrap: wrap; }
         .icon-example { display: inline-block; width: 16px; height: 16px; background: white; border-radius: 50%; }
     </style>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script>
 </head>
 <body>
 
@@ -27,8 +28,6 @@
 </div>
 
 <script type="module">
-    import "./src/index.js";
-
     const btn1 = document.getElementById("btn1");
     btn1.addEventListener("click", () => {
         alert("Primary button clicked!");
