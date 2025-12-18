@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Widgets Demo</title>
+    <style>
+        body { background: #222; color: white; font-family: Arial, sans-serif; padding: 40px; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .icon-example { display: inline-block; width: 16px; height: 16px; background: white; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+<h1>AWS Widgets Demo</h1>
+
+<div class="container">
+    <aws-button id="btn1">Primary</aws-button>
+    <aws-button variant="secondary">Secondary</aws-button>
+    <aws-button variant="ghost">Ghost</aws-button>
+    <aws-button>
+        <span slot="icon" class="icon-example"></span>
+        Icon Button
+    </aws-button>
+    <aws-button disabled>Disabled</aws-button>
+    <aws-button size="lg">Large</aws-button>
+    <aws-button size="sm">Small</aws-button>
+</div>
+
+<script type="module">
+    import "./src/index.js";
+
+    const btn1 = document.getElementById("btn1");
+    btn1.addEventListener("click", () => {
+        alert("Primary button clicked!");
+    });
+</script>
+
+</body>
+</html>

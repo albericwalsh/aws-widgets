@@ -1,0 +1,11 @@
+{
+  "name": "aws-widgets",
+  "version": "0.1.0",
+  "description": "Reusable Web Components library (AWS Widgets)",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": ["dist"],
+  "author": "",
+  "license": "MIT"
+}
