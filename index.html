@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test AWS Widgets CDN</title>
+</head>
+<body>
+<aws-button>Primary</aws-button>
+
+<script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script>
+<script>
+    document.querySelector("aws-button").addEventListener("click", () => {
+        alert("Bouton cliqué via CDN !");
+    });
+</script>
+</body>
+</html>
