@@ -1,4 +1,38 @@
-(function(t){typeof define=="function"&&define.amd?define(t):t()})((function(){"use strict";var t=typeof document<"u"?document.currentScript:null;async function d(s,e,i){const[o,l]=await Promise.all([fetch(s).then(n=>n.text()),fetch(e).then(n=>n.text())]);i.innerHTML=`
-        <style>${l}</style>
-        ${o}
-    `}class c extends HTMLElement{static get observedAttributes(){return["disabled","variant","type","size"]}constructor(){super(),this.attachShadow({mode:"open"});const e=new URL("data:text/html;base64,PGJ1dHRvbiBwYXJ0PSJidXR0b24iIGNsYXNzPSJidG4iPg0KICAgIDxzcGFuIHBhcnQ9Imljb24iIGNsYXNzPSJpY29uIj4NCiAgICAgICAgPHNsb3QgbmFtZT0iaWNvbiI+PC9zbG90Pg0KICAgIDwvc3Bhbj4NCiAgICA8c3BhbiBwYXJ0PSJ0ZXh0IiBjbGFzcz0idGV4dCI+DQogICAgICAgIDxzbG90Pjwvc2xvdD4NCiAgICA8L3NwYW4+DQo8L2J1dHRvbj4NCg==",typeof document>"u"&&typeof location>"u"?require("url").pathToFileURL(__filename).href:typeof document>"u"?location.href:t&&t.tagName.toUpperCase()==="SCRIPT"&&t.src||new URL("index.js",document.baseURI).href).href,i=new URL("data:text/css;base64,Omhvc3Qgew0KICAgIGRpc3BsYXk6IGlubGluZS1ibG9jazsNCn0NCg0KLmJ0biB7DQogICAgZGlzcGxheTogaW5saW5lLWZsZXg7DQogICAgYWxpZ24taXRlbXM6IGNlbnRlcjsNCiAgICBnYXA6IDEwcHg7DQogICAgcGFkZGluZzogMTJweCAyOHB4Ow0KICAgIGJvcmRlci1yYWRpdXM6IDQwcHg7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KICAgIGJvcmRlcjogMXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsMC4yNSk7DQogICAgYmFja2dyb3VuZDogcmdiYSgyNTUsMjU1LDI1NSwwLjA4KTsNCiAgICBjb2xvcjogd2hpdGU7DQogICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIC4ycyBlYXNlLCBiYWNrZ3JvdW5kIC4ycyBlYXNlOw0KfQ0KDQovKiBWYXJpYW50cyAqLw0KLmJ0bltkYXRhLXZhcmlhbnQ9InNlY29uZGFyeSJdIHsNCiAgICBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudDsNCiAgICBib3JkZXItY29sb3I6IHJnYmEoMjU1LDI1NSwyNTUsMC40KTsNCn0NCg0KLmJ0bltkYXRhLXZhcmlhbnQ9Imdob3N0Il0gew0KICAgIGJhY2tncm91bmQ6IG5vbmU7DQogICAgYm9yZGVyOiBub25lOw0KfQ0KDQovKiBTaXplcyAqLw0KLmJ0bltkYXRhLXNpemU9InNtIl0geyBwYWRkaW5nOiA4cHggMTZweDsgfQ0KLmJ0bltkYXRhLXNpemU9ImxnIl0geyBwYWRkaW5nOiAxNnB4IDM2cHg7IH0NCg0KLyogU3RhdGVzICovDQouYnRuOmhvdmVyOm5vdCg6ZGlzYWJsZWQpIHsNCiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoLTJweCk7DQp9DQoNCi5idG46ZGlzYWJsZWQgew0KICAgIG9wYWNpdHk6IC41Ow0KICAgIGN1cnNvcjogbm90LWFsbG93ZWQ7DQp9DQo=",typeof document>"u"&&typeof location>"u"?require("url").pathToFileURL(__filename).href:typeof document>"u"?location.href:t&&t.tagName.toUpperCase()==="SCRIPT"&&t.src||new URL("index.js",document.baseURI).href).href;d(e,i,this.shadowRoot)}connectedCallback(){this._btn=this.shadowRoot.querySelector("button"),this._btn.addEventListener("click",e=>{if(this.disabled){e.preventDefault(),e.stopPropagation();return}this.dispatchEvent(new Event("click",{bubbles:!0}))}),this._syncAll()}attributeChangedCallback(){this._syncAll()}get disabled(){return this.hasAttribute("disabled")}set disabled(e){e?this.setAttribute("disabled",""):this.removeAttribute("disabled")}_syncAll(){this._btn&&(this._btn.disabled=this.disabled,this._btn.type=this.getAttribute("type")||"button",this._btn.setAttribute("data-variant",this.getAttribute("variant")||"primary"),this._btn.setAttribute("data-size",this.getAttribute("size")||"md"),this.setAttribute("aria-disabled",this.disabled?"true":"false"))}}customElements.define("aws-button",c)}));
+(function(e){typeof define=="function"&&define.amd?define(e):e()})((function(){"use strict";class e extends HTMLElement{static get observedAttributes(){return["disabled","variant","type","size"]}constructor(){super(),this.attachShadow({mode:"open"});const t=document.createElement("template");t.innerHTML=`
+        <style>
+            :host { display: inline-block; }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px 28px;
+                border-radius: 40px;
+                cursor: pointer;
+                border: 1px solid rgba(255,255,255,0.25);
+                background: rgba(255,255,255,0.08);
+                color: white;
+                transition: transform .2s ease, background .2s ease;
+            }
+
+            /* Variants */
+            .btn[data-variant="secondary"] { background: transparent; border-color: rgba(255,255,255,0.4); }
+            .btn[data-variant="ghost"] { background: none; border: none; }
+
+            /* Sizes */
+            .btn[data-size="sm"] { padding: 8px 16px; }
+            .btn[data-size="lg"] { padding: 16px 36px; }
+
+            /* States */
+            .btn:hover:not(:disabled) { transform: translateY(-2px); }
+            .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+            .icon { display: inline-flex; align-items: center; }
+            .text { display: inline-flex; align-items: center; }
+        </style>
+
+        <button class="btn" part="button">
+            <span class="icon"><slot name="icon"></slot></span>
+            <span class="text"><slot></slot></span>
+        </button>
+        `,this.shadowRoot.appendChild(t.content.cloneNode(!0)),this._btn=this.shadowRoot.querySelector("button"),this._btn.addEventListener("click",n=>{if(this.disabled){n.preventDefault(),n.stopPropagation();return}this.dispatchEvent(new Event("click",{bubbles:!0}))}),this._syncAll()}connectedCallback(){this._syncAll()}attributeChangedCallback(t,n,i){this._syncAll()}get disabled(){return this.hasAttribute("disabled")}set disabled(t){t?this.setAttribute("disabled",""):this.removeAttribute("disabled")}_syncAll(){this._btn&&(this._btn.disabled=this.disabled,this._btn.type=this.getAttribute("type")||"button",this._btn.setAttribute("data-variant",this.getAttribute("variant")||"primary"),this._btn.setAttribute("data-size",this.getAttribute("size")||"md"),this.setAttribute("aria-disabled",this.disabled?"true":"false"))}}customElements.define("aws-button",e)}));
