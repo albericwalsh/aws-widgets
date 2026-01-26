@@ -1,0 +1,18 @@
+{
+  "fonts": {
+    "title": "Inter, serif",
+    "body": "Inter, sans-serif"
+  },
+  "colors": {
+    "textPrimary": "#ffffff",
+    "textSecondary": "rgba(255,255,255,0.8)",
+    "background": "#1e1e1e",
+    "btnPrimaryBg": "rgba(255,255,255,0.08)",
+    "btnSecondaryBg": "transparent",
+    "btnColor": "#ffffff",
+    "btnBorder": "rgba(255,255,255,0.25)"
+  },
+  "spacing": {
+    "widgetGap": "10px"
+  }
+}
