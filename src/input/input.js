@@ -1,4 +1,4 @@
-import { load_file } from "../utils.js";
+import { loadFile } from "../utils/load_file.js";
 import { copi_btn } from "./input_utils.js";
 
 class SP_Input extends HTMLElement {
@@ -7,10 +7,10 @@ class SP_Input extends HTMLElement {
         this.shadow = this.attachShadow({ mode: "open" });
         this.listeners = new Map(); // Pour détacher proprement les listeners
 
-        const htmlUrl = "./widgets/input/input.html";
-        const cssUrl  = "./widgets/input/input.css";
+        const htmlUrl = new URL("./input.html", import.meta.url).href;
+        const cssUrl  = new URL("./input.css", import.meta.url).href;
 
-        this.ready = load_file("SP_Input", htmlUrl, cssUrl, this.shadow)
+        this.ready = loadFile(htmlUrl, cssUrl, this.shadow)
             .then(() => {
                 this.isReady = true;
                 this.render(); // premier rendu
@@ -232,4 +232,4 @@ class SP_Input extends HTMLElement {
     }
 }
 
-customElements.define("sp-input", SP_Input);
+customElements.define("aws-input", SP_Input);

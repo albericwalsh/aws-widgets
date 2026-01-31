@@ -1,4 +1,4 @@
-import { load_file } from "../utils.js";
+import { loadFile } from "../utils/load_file.js";
 
 class SP_selector extends HTMLElement {
     static get observedAttributes() { return ["value", "displaykey", "zindex"]; }
@@ -21,7 +21,7 @@ class SP_selector extends HTMLElement {
 
         const htmlUrl = new URL("./selector.html", import.meta.url).href;
         const cssUrl  = new URL("./selector.css", import.meta.url).href;
-        load_file("SP_selector", htmlUrl, cssUrl, this.shadowRoot);
+        loadFile(htmlUrl, cssUrl, this.shadowRoot);
     }
 
     connectedCallback() {
@@ -186,4 +186,4 @@ class SP_selector extends HTMLElement {
     set zindex(z) { this._zindex = z; if (this._optionsContentRoot) this._optionsContentRoot.style.zIndex = z; }
 }
 
-customElements.define("sp-selector", SP_selector);
+customElements.define("aws-selector", SP_selector);

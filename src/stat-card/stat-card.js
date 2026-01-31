@@ -1,4 +1,4 @@
-import { load_file } from "../utils.js";
+import { loadFile } from "../utils/load_file.js";
 
 class SP_StatCard extends HTMLElement {
     constructor() {
@@ -8,7 +8,7 @@ class SP_StatCard extends HTMLElement {
         const htmlUrl = new URL("./stat-card.html", import.meta.url).href;
         const cssUrl = new URL("./stat-card.css", import.meta.url).href;
 
-        load_file("SP_StatCard", htmlUrl, cssUrl, this.shadow).then(() => {
+        loadFile(htmlUrl, cssUrl, this.shadow).then(() => {
             console.log("HTML & CSS chargés");
             this.updateBackground();
         });
@@ -84,4 +84,4 @@ class SP_StatCard extends HTMLElement {
     }
 }
 
-customElements.define("sp-stat-card", SP_StatCard);
+customElements.define("aws-stat-card", SP_StatCard);

@@ -1,14 +1,14 @@
-import { load_file } from "../utils.js";
+import { loadFile } from "../utils/load_file.js";
 
 class SP_context extends HTMLElement {
     constructor() {
         super();
         this.shadow = this.attachShadow({ mode: "open" });
 
-        const html = "./widgets/context/context.html";
-        const css = "./widgets/context/context.css";
+        const htmlUrl = new URL("./context.html", import.meta.url).href;
+        const cssUrl = new URL("./context.css", import.meta.url).href;
 
-        load_file("SP_context", html, css, this.shadow).then(() => {
+        loadFile(htmlUrl, cssUrl, this.shadow).then(() => {
             this.overlay = this.shadow.querySelector(".overlay");
             this.container = this.shadow.querySelector(".container");
 
@@ -31,4 +31,4 @@ class SP_context extends HTMLElement {
     }
 }
 
-customElements.define("sp-context", SP_context);
+customElements.define("aws-context", SP_context);

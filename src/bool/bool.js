@@ -66,6 +66,7 @@ export class AWSBool extends HTMLElement {
     }
 
     _updateDisplay() {
+        if (!this._root) return; // Éviter les appels avant connectedCallback
         const isOn = this.value;
 
         const badge = this._root.querySelector(".bool-view");

@@ -1,5 +1,5 @@
 export async function create_element() {
-    const html = await fetch("./widgets/input/telephone/telephone.html")
+    const html = await fetch(new URL("./telephone.html", import.meta.url).href)
         .then(res => res.text());
 
     const template = document.createElement("template");

@@ -1,7 +1,7 @@
 import {copi_btn} from "../input_utils.js";
 
 export async function create_element() {
-    const html = await fetch("./widgets/input/number/number.html")
+    const html = await fetch(new URL("./number.html", import.meta.url).href)
         .then(res => res.text());
 
     const template = document.createElement("template");

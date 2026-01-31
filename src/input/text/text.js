@@ -3,7 +3,7 @@ import { copi_btn } from "../input_utils.js";
 export async function create_element({ mode = "input", value = "" } = {}) {
     const htmlFile = mode === "input" ? "text-input.html" : "text-output.html";
 
-    const html = await fetch(`./widgets/input/text/${htmlFile}`)
+    const html = await fetch(new URL(`./${htmlFile}`, import.meta.url).href)
         .then(res => res.text());
 
     const template = document.createElement("template");

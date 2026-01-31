@@ -1,5 +1,5 @@
 // widgets/paragraph/paragraph.js
-import {load_file} from "../utils.js";
+import {loadFile} from "../utils/load_file.js";
 
 class SP_Paragraph extends HTMLElement {
     constructor() {
@@ -10,7 +10,7 @@ class SP_Paragraph extends HTMLElement {
         const cssUrl  = new URL("./paragraph.css", import.meta.url).href;
 
         // On attend que le HTML+CSS soient chargés avant de manipuler le DOM
-        load_file("SP_Paragraph", htmlUrl, cssUrl, this.shadow).then(() => {
+        loadFile(htmlUrl, cssUrl, this.shadow).then(() => {
             this.updateVariant();
             this.updateLoading();
         });
@@ -46,4 +46,4 @@ class SP_Paragraph extends HTMLElement {
     }
 }
 
-customElements.define("sp-paragraph", SP_Paragraph);
+customElements.define("aws-paragraph", SP_Paragraph);

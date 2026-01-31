@@ -9,10 +9,17 @@ async function loadWidgets() {
         }
 
         const data = await response.json();
-        const list = data.widgets || [];
+        const rawList = data.widgets || [];
+
+        // Normalize entries: allow either string ids or object { id, parameters }
+        const list = rawList.map(entry => typeof entry === 'string' ? { id: entry } : entry);
+
+        // Expose normalized widget metadata for demos/tools
+        try { window.awsWidgets = list; } catch(_) { /* ignore in strict contexts */ }
 
         await Promise.all(
-            list.map(async name => {
+            list.map(async item => {
+                const name = item.id;
                 const moduleUrl = new URL(`./${name}/${name}.js`, import.meta.url).href;
                 try {
                     await import(moduleUrl);

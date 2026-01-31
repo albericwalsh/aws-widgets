@@ -1,9 +1,25 @@
 {
   "widgets": [
-    "button",
-    "title",
-    "bool",
-    "icon-button",
-    "slider"
+    {
+      "id": "button",
+      "parameters": {
+        "label": "Click Me",
+        "variant": ["primary","secondary","ghost"],
+        "size": ["sm","md","lg"],
+        "icon": ["none","left","right"]
+      }
+    },
+    { "id": "title" },
+    { "id": "bool", "parameters": { "mode": ["edit","view"] } },
+    { "id": "icon-button", "parameters": { "sizes": ["sm","md","lg"] } },
+    { "id": "slider", "parameters": { "min": 0, "max": 100 } },
+    { "id": "table" },
+    { "id": "stat-card", "parameters": { "label": "Users", "unit": "+%" } },
+    { "id": "selector" },
+    { "id": "search" },
+    { "id": "progress-circle" },
+    { "id": "paragraph" },
+    { "id": "input", "parameters": { "types": ["text","email","number","password","date","url","telephone"] } },
+    { "id": "context" }
   ]
 }

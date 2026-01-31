@@ -1,4 +1,4 @@
-import {load_file} from "../utils.js";
+import {loadFile} from "../utils/load_file.js";
 
 class SP_ProgressCircle extends HTMLElement {
     constructor() {
@@ -8,7 +8,7 @@ class SP_ProgressCircle extends HTMLElement {
         const htmlUrl = new URL("./progress-circle.html", import.meta.url).href;
         const cssUrl = new URL("./progress-circle.css", import.meta.url).href;
 
-        load_file("SP_ProgressCircle", htmlUrl, cssUrl, this.shadow).then(() => {
+        loadFile(htmlUrl, cssUrl, this.shadow).then(() => {
             this._initParticles();
         });
     }
@@ -65,4 +65,4 @@ class SP_ProgressCircle extends HTMLElement {
     }
 }
 
-customElements.define("sp-progress-circle", SP_ProgressCircle);
+customElements.define("aws-progress-circle", SP_ProgressCircle);

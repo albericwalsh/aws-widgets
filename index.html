@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Widgets Demo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="styles/demo.css">
+    <script type="module">import "./src/index.js"</script>
+</head>
+<body>
+
+<header>
+    <h1>🚀 AWS Widgets Library</h1>
+    <p class="subtitle">Collection de Web Components réutilisables</p>
+</header>
+
+<div id="widget-showcase" class="widget-showcase"></div>
+
+<script type="module">
+    import { createPresentationElementFromList } from './src/utils/widget_presentation.js';
+
+    (async () => {
+        // Try to use the normalized list exposed by src/index.js, otherwise fetch widgets.json
+        let list = window.awsWidgets;
+        if (!Array.isArray(list)) {
+            try {
+                const resp = await fetch(new URL('./src/widgets.json', import.meta.url));
+                const data = await resp.json();
+                list = data.widgets || [];
+            } catch (e) {
+                console.error('Failed loading widgets.json for demo:', e);
+                list = [];
+            }
+        }
+
+        const container = document.getElementById('widget-showcase');
+        if (!container) return;
+
+        for (const entry of list) {
+            const id = typeof entry === 'string' ? entry : entry.id;
+            const el = createPresentationElementFromList(list, id);
+            if (!el) continue;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'widget-item';
+            wrapper.appendChild(el);
+            container.appendChild(wrapper);
+        }
+
+        // Highlight generated code blocks
+        container.querySelectorAll('pre code, code.aws-widget-code').forEach(block => hljs.highlightElement(block));
+    })();
+</script>
+
+</body>
+</html>
