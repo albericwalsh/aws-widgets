@@ -3,7 +3,7 @@ import { loadTheme } from "../utils/theme.js";
 import {generateCSS} from "./generateCSS.js";
 
 export class AWSButton extends HTMLElement {
-    static get observedAttributes() { return ["disabled", "variant", "type", "size"]; }
+    static get observedAttributes() { return ["disabled", "variant", "type", "size", "aria-label"]; }
 
     constructor() {
         super();
@@ -25,6 +25,8 @@ export class AWSButton extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this._btn = this.shadowRoot.querySelector("button");
+        this._textEl = this.shadowRoot.querySelector('.text');
+
         this._btn.addEventListener("click", e => {
             if (this.disabled) {
                 e.preventDefault();
@@ -48,6 +50,13 @@ export class AWSButton extends HTMLElement {
         this._btn.type = this.getAttribute("type") || "button";
         this._btn.setAttribute("data-variant", this.getAttribute("variant") || "primary");
         this._btn.setAttribute("data-size", this.getAttribute("size") || "md");
+
+        // Note: icon presentation is left to the user via slot (do not manage here)
+
+        // aria label passthrough (if provided)
+        const aria = this.getAttribute('aria-label');
+        if (aria) this._btn.setAttribute('aria-label', aria);
+
         this.setAttribute("aria-disabled", this.disabled ? "true" : "false");
     }
 }

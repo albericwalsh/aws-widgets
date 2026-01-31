@@ -7,6 +7,15 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+function unescapeHtml(str) {
+  return String(str)
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 export function populatePresentationSection(section, widget, values) {
   const id = widget.id;
   const paramsMeta = widget.parameters || {};
@@ -20,8 +29,12 @@ export function populatePresentationSection(section, widget, values) {
   function applyValues() {
     Object.keys(values).forEach(key => {
       const val = values[key];
-      if (key === 'label' || key === 'text' || key === 'content') {
+      if (key === 'label' || key === 'text') {
         refs.liveEl.textContent = val;
+      } else if (key === 'content') {
+        // allow widgets that render HTML (like `table`) to inject markup
+        if (id === 'table') refs.liveEl.innerHTML = val || '';
+        else refs.liveEl.textContent = val;
       } else if (typeof val === 'boolean') {
         if (val) refs.liveEl.setAttribute(key, ''); else refs.liveEl.removeAttribute(key);
       } else if (val !== null && val !== undefined && val !== '') {
@@ -43,12 +56,28 @@ export function populatePresentationSection(section, widget, values) {
     }
     const openTag = attrs.length ? `<${tag} ${attrs.join(' ')}>` : `<${tag}>`;
     const example = `${openTag}${escapeHtml(inner)}<\/${tag}>`;
-    refs.codeBlock.textContent = example;
+    // show literal angle brackets in the demo code (convert entities back)
+    refs.codeBlock.textContent = unescapeHtml(example);
     try { hljs && hljs.highlightElement(refs.codeBlock); } catch(_) {}
     applyValues();
   }
 
   // Build controls
+  // If widget supports being disabled, expose a checkbox control for it
+  if (widget.desactivable) {
+    const key = 'disabled';
+    const group = document.createElement('div'); group.className = 'control-group';
+    const label = document.createElement('label'); label.className = 'control-label'; label.textContent = key;
+    group.appendChild(label);
+    const input = document.createElement('input'); input.type = 'checkbox'; input.className = 'control-input';
+    // determine initial state: values > paramsMeta > false
+    const init = (values && typeof values[key] !== 'undefined') ? values[key] : (paramsMeta && typeof paramsMeta[key] !== 'undefined' ? paramsMeta[key] : false);
+    input.checked = !!init; values[key] = !!init;
+    input.addEventListener('change', () => { values[key] = input.checked; updateCodeAndPreview(); });
+    group.appendChild(input);
+    refs.controls.appendChild(group);
+  }
+
   for (const [key, meta] of Object.entries(paramsMeta)) {
     const group = document.createElement('div'); group.className = 'control-group';
     const label = document.createElement('label'); label.className = 'control-label'; label.textContent = key;
@@ -66,8 +95,14 @@ export function populatePresentationSection(section, widget, values) {
       input = document.createElement('input'); input.type = 'number'; input.className = 'control-input'; input.value = values[key];
       input.addEventListener('input', () => { values[key] = Number(input.value); updateCodeAndPreview(); });
     } else {
-      input = document.createElement('input'); input.type = 'text'; input.className = 'control-input'; input.value = values[key];
-      input.addEventListener('input', () => { values[key] = input.value; updateCodeAndPreview(); });
+      // special-case 'content' and 'data' to provide a textarea for multi-line editing
+      if (key === 'content' || key === 'data' || key === 'data_name') {
+        input = document.createElement('textarea'); input.className = 'control-input'; input.rows = (key === 'data' ? 3 : 4); input.value = values[key] || '';
+        input.addEventListener('input', () => { values[key] = input.value; updateCodeAndPreview(); });
+      } else {
+        input = document.createElement('input'); input.type = 'text'; input.className = 'control-input'; input.value = values[key];
+        input.addEventListener('input', () => { values[key] = input.value; updateCodeAndPreview(); });
+      }
     }
 
     group.appendChild(input);

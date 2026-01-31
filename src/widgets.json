@@ -2,23 +2,79 @@
   "widgets": [
     {
       "id": "button",
+      "desactivable": true,
       "parameters": {
         "label": "Click Me",
         "variant": ["primary","secondary","ghost"],
-        "size": ["sm","md","lg"],
-        "icon": ["none","left","right"]
+        "size": ["sm","md","lg"]
       }
     },
-    { "id": "title" },
-    { "id": "bool", "parameters": { "mode": ["edit","view"] } },
-    { "id": "icon-button", "parameters": { "sizes": ["sm","md","lg"] } },
-    { "id": "slider", "parameters": { "min": 0, "max": 100 } },
-    { "id": "table" },
-    { "id": "stat-card", "parameters": { "label": "Users", "unit": "+%" } },
-    { "id": "selector" },
-    { "id": "search" },
+    { 
+      "id": "text",
+      "desactivable": false,
+      "parameters": {
+        "styles": ["heading","subheading","body","caption", "paragraph"],
+        "alignments": ["top","center","bottom" ],
+        "justify": ["left","center","right"],
+        "colors": ["default","muted","primary","secondary","success","warning","danger"],
+        "weight": ["light","normal","bold"],
+        "transform": ["none","uppercase","lowercase","capitalize"],
+        "decoration": ["none","underline","line-through"],
+        "italic": [true,false],
+        "content": "Exemple de texte"
+      }
+    },
+    { 
+      "id": "bool", 
+      "desactivable": true,
+      "parameters": { "mode": ["edit","view"] } 
+    },
+    { 
+      "id": "icon-button",
+      "desactivable": true,
+      "parameters": {
+        "size": ["sm","md","lg"],
+        "variant": ["primary","secondary","ghost"],
+        "content": "account_circle"
+      }
+    },
+    { 
+      "id": "slider", 
+      "desactivable": true,
+      "parameters": { 
+        "min": 0, 
+        "max": 100,
+        "value": 50 
+        } 
+      },
+    { 
+      "id": "search",
+      "desactivable": true,
+      "parameters": {
+        "placeholder": "Rechercher...",
+        "variant": ["primary","secondary","ghost"],
+        "clearable": true,
+        "debounce": 300
+      }
+    },
+    { "id": "table",
+    "parameters": {
+      "content": "\n  <aws-table-head>\n    <aws-table-row>\n      <aws-table-cell>Nom</aws-table-cell>\n      <aws-table-cell>Email</aws-table-cell>\n      <aws-table-cell>Age</aws-table-cell>\n    </aws-table-row>\n  </aws-table-head>\n  <aws-table-body>\n    <aws-table-row>\n      <aws-table-cell>Alice</aws-table-cell>\n      <aws-table-cell>alice@example.com</aws-table-cell>\n      <aws-table-cell>30</aws-table-cell>\n    </aws-table-row>\n    <aws-table-row>\n      <aws-table-cell>Bob</aws-table-cell>\n      <aws-table-cell>bob@example.com</aws-table-cell>\n      <aws-table-cell>28</aws-table-cell>\n    </aws-table-row>\n  </aws-table-body>\n"
+      }
+  },
+    { "id": "chart",
+      "desactivable": false,
+      "parameters": {
+        "type": ["bar","column","pie","line"],
+        "data": "sample",
+        "title": "Sample Chart",
+        "xLabel": "X axis",
+        "yLabel": "Y axis",
+        "data_name": "A,B,C",
+        "show_values": false
+      }
+    },
     { "id": "progress-circle" },
-    { "id": "paragraph" },
     { "id": "input", "parameters": { "types": ["text","email","number","password","date","url","telephone"] } },
     { "id": "context" }
   ]

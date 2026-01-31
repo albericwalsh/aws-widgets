@@ -1,74 +1,67 @@
-import { loadFile } from "../utils/load_file.js";
-
-function attachCSS(shadow) {
-    const link = document.createElement("link");
-    link.setAttribute("rel", "stylesheet");
-    link.setAttribute("href", new URL("./table.css", import.meta.url).href);
-    shadow.appendChild(link);
-}
+import { loadTheme } from "../utils/theme.js";
+import { generateCSS } from "./generateCSS.js";
 
 class SP_Table extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        attachCSS(this.shadowRoot);
+    }
 
-        const container = document.createElement("div");
-        container.classList.add("table");
-        const slot = document.createElement("slot");
-        container.appendChild(slot);
-        this.shadowRoot.appendChild(container);
+    async connectedCallback() {
+        const theme = await loadTheme();
+        const style = generateCSS(theme);
+        const tpl = document.createElement('template');
+        tpl.innerHTML = `
+            <style>${style}</style>
+            <div class="table"><slot></slot></div>
+        `;
+        this.shadowRoot.appendChild(tpl.content.cloneNode(true));
     }
 }
 
 class SP_TableHead extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        attachCSS(this.shadowRoot);
-
-        const slot = document.createElement("slot");
-        slot.classList.add("table-head");
-        this.shadowRoot.appendChild(slot);
+    constructor() { super(); this.attachShadow({ mode: "open" }); }
+    async connectedCallback() {
+        const theme = await loadTheme();
+        const style = generateCSS(theme);
+        const tpl = document.createElement('template');
+        tpl.innerHTML = `<style>${style}</style><slot class="table-head"></slot>`;
+        this.shadowRoot.appendChild(tpl.content.cloneNode(true));
     }
 }
 
 class SP_TableBody extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        attachCSS(this.shadowRoot);
-
-        const slot = document.createElement("slot");
-        slot.classList.add("table-body");
-        this.shadowRoot.appendChild(slot);
+    constructor() { super(); this.attachShadow({ mode: "open" }); }
+    async connectedCallback() {
+        const theme = await loadTheme();
+        const style = generateCSS(theme);
+        const tpl = document.createElement('template');
+        tpl.innerHTML = `<style>${style}</style><slot class="table-body"></slot>`;
+        this.shadowRoot.appendChild(tpl.content.cloneNode(true));
     }
 }
 
 class SP_TableRow extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        attachCSS(this.shadowRoot);
-
-        const slot = document.createElement("slot");
-        slot.classList.add("table-row");
-        this.shadowRoot.appendChild(slot);
+    constructor() { super(); this.attachShadow({ mode: "open" }); }
+    async connectedCallback() {
+        const theme = await loadTheme();
+        const style = generateCSS(theme);
+        const tpl = document.createElement('template');
+        tpl.innerHTML = `<style>${style}</style><slot class="table-row"></slot>`;
+        this.shadowRoot.appendChild(tpl.content.cloneNode(true));
     }
 }
 
 class SP_TableCell extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        attachCSS(this.shadowRoot);
-
-        const slot = document.createElement("slot");
-        slot.classList.add("table-cell");
-        this.shadowRoot.appendChild(slot);
+    constructor() { super(); this.attachShadow({ mode: "open" }); }
+    async connectedCallback() {
+        const theme = await loadTheme();
+        const style = generateCSS(theme);
+        const tpl = document.createElement('template');
+        tpl.innerHTML = `<style>${style}</style><slot class="table-cell"></slot>`;
+        this.shadowRoot.appendChild(tpl.content.cloneNode(true));
     }
 }
-
 
 customElements.define("aws-table", SP_Table);
 customElements.define("aws-table-head", SP_TableHead);

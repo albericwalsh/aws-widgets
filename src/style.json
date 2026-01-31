@@ -92,6 +92,10 @@
       "hoverScale": "1.1"
     }
   },
+  "chart": {
+    "valueColor": "#ffffff",
+    "legendValueColor": "#ffffff"
+  },
   "spacing": {
     "widgetGap": "10px"
   }

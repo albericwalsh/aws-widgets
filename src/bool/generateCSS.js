@@ -85,5 +85,23 @@ export function generateCSS(theme) {
             transform: scale(${bool.toggle.thumbActiveScale});
             opacity: ${bool.toggle.thumbActiveOpacity};
         }
+
+        /* Disabled appearance when host or toggle is disabled */
+        :host([disabled]) .toggle,
+        .toggle[aria-disabled="true"] {
+            cursor: not-allowed;
+            opacity: 0.55;
+            filter: grayscale(24%);
+        }
+
+        :host([disabled]) .toggle .thumb,
+        .toggle[aria-disabled="true"] .thumb {
+            background: rgba(255,255,255,0.65);
+        }
+
+        :host([disabled]) .bool-view {
+            opacity: 0.6;
+            color: rgba(255,255,255,0.65);
+        }
     `;
 }

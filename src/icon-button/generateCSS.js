@@ -1,5 +1,6 @@
 export function generateCSS(theme) {
     const iconBtn = theme.widgets.iconButton;
+    const btnTheme = theme.widgets.button || {};
 
     return `
         :host {
@@ -26,10 +27,28 @@ export function generateCSS(theme) {
             transform: scale(${iconBtn.hoverScale});
         }
 
+        /* variants similar to main button */
+        button[data-variant="secondary"] { background: ${btnTheme.secondaryBg || iconBtn.background}; border: 1px solid ${btnTheme.border || 'transparent'}; }
+        button[data-variant="ghost"] { background: ${btnTheme.ghostBg || 'transparent'}; border: none; }
+
         button:active {
             background: ${iconBtn.backgroundActive};
             transform: scale(${iconBtn.activeScale});
         }
+
+        /* Disabled state */
+        :host(:disabled) button,
+        button:disabled {
+            opacity: 0.55;
+            transform: none;
+                /* keep pointer-events so the cursor can appear; interaction blocked by disabled attribute */
+            filter: grayscale(28%);
+            background: ${iconBtn.background};
+            cursor: not-allowed;
+        }
+            
+
+        /* No strikethrough; disabled state uses cursor + opacity (see above) */
 
         i {
             font-family: 'Material Icons', serif;
