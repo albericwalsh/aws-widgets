@@ -6,11 +6,91 @@
   "colors": {
     "textPrimary": "#ffffff",
     "textSecondary": "rgba(255,255,255,0.8)",
-    "background": "#1e1e1e",
-    "btnPrimaryBg": "rgba(255,255,255,0.08)",
-    "btnSecondaryBg": "transparent",
-    "btnColor": "#ffffff",
-    "btnBorder": "rgba(255,255,255,0.25)"
+    "background": "#1e1e1e"
+  },
+  "widgets": {
+    "button": {
+      "primaryBg": "rgba(255,255,255,0.08)",
+      "secondaryBg": "transparent",
+      "ghostBg": "none",
+      "color": "#ffffff",
+      "border": "rgba(255,255,255,0.25)",
+      "hoverTransform": "translateY(-2px)",
+      "padding": {
+        "sm": "8px 16px",
+        "md": "12px 28px",
+        "lg": "16px 36px"
+      },
+      "borderRadius": "40px"
+    },
+    "title": {
+      "fontFamily": "Inter, serif",
+      "fontSize": "2.5rem",
+      "color": "#ffffff"
+    },
+    "paragraph": {
+      "fontFamily": "Inter, sans-serif",
+      "fontSize": "1rem",
+      "color": "rgba(255,255,255,0.8)"
+    },
+    "bool": {
+      "wrapperMinWidth": "50px",
+      "view": {
+        "padding": "4px 10px",
+        "borderRadius": "16px",
+        "fontSize": "13px",
+        "color": "white",
+        "onBg": "rgba(0,255,120,0.25)",
+        "onBorder": "rgba(0,255,120,0.5)",
+        "offBg": "rgba(255,60,60,0.25)",
+        "offBorder": "rgba(255,60,60,0.5)",
+        "pulseDuration": "0.35s",
+        "pulseScale": "1.2",
+        "pulseOpacityStart": "0.7"
+      },
+      "toggle": {
+        "width": "48px",
+        "height": "26px",
+        "borderRadius": "20px",
+        "bg": "rgba(255,255,255,0.15)",
+        "border": "rgba(255,255,255,0.25)",
+        "activeScale": "0.92",
+        "activeOpacity": "0.75",
+        "onBg": "rgba(0,255,150,0.35)",
+        "onBorder": "rgba(0,255,150,0.55)",
+        "thumbSize": "20px",
+        "thumbOffset": "3px",
+        "thumbBg": "white",
+        "thumbActiveOffset": "22px",
+        "thumbActiveScale": "0.9",
+        "thumbActiveOpacity": "0.85"
+      }
+    },
+    "iconButton": {
+      "background": "rgba(255,255,255,0.1)",
+      "backgroundHover": "rgba(255,255,255,0.2)",
+      "backgroundActive": "rgba(255,255,255,0.3)",
+      "color": "#ffffff",
+      "borderRadius": "50%",
+      "hoverScale": "1.1",
+      "activeScale": "0.95",
+      "sizes": {
+        "sm": 32,
+        "md": 50,
+        "lg": 70
+      },
+      "iconRatio": 0.6
+    },
+    "slider": {
+      "width": "220px",
+      "trackHeight": "4px",
+      "trackBg": "rgba(255,255,255,0.15)",
+      "trackBorder": "rgba(255,255,255,0.25)",
+      "borderRadius": "20px",
+      "thumbSize": "22px",
+      "thumbBg": "linear-gradient(145deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05))",
+      "hoverScale": "1.1"
+    }
   },
   "spacing": {
     "widgetGap": "10px"

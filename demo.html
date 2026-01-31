@@ -8,7 +8,10 @@
         .container { display: flex; gap: 20px; flex-wrap: wrap; }
         .icon-example { display: inline-block; width: 16px; height: 16px; background: white; border-radius: 50%; }
     </style>
-    <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script>
+<!--    <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script>-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="module">import "./src/index.js"</script>
+
 </head>
 <body>
 
@@ -25,6 +28,20 @@
     <aws-button disabled>Disabled</aws-button>
     <aws-button size="lg">Large</aws-button>
     <aws-button size="sm">Small</aws-button>
+</div>
+<div>
+    <aws-title>This is a Title</aws-title>
+</div>
+<div>
+    <aws-bool></aws-bool>
+</div>
+<div>
+    <aws-icon-button size="sm">settings</aws-icon-button>
+    <aws-icon-button size="md">account_circle</aws-icon-button>
+    <aws-icon-button size="72">favorite</aws-icon-button>
+</div>
+<div>
+    <aws-slider min="0" max="100" value="40"></aws-slider>
 </div>
 
 <script type="module">

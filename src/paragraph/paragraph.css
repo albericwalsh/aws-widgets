@@ -1,0 +1,35 @@
+/* widgets/paragraph/paragraph.css */
+.paragraph-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: white;
+}
+
+/* Variants */
+.variant-default {
+    color: rgba(255,255,255,0.25);
+}
+
+.variant-info {
+    color: rgba(0, 132, 255, 0.45);
+}
+
+.variant-warning {
+    color: rgba(255, 180, 0, 0.55);
+}
+
+.variant-error {
+    color: rgba(255, 50, 50, 0.55);
+}
+
+.variant-success {
+    color: rgba(50, 255, 140, 0.55);
+}
+
+#loader {
+    display: none;
+}

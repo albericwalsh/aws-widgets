@@ -1,0 +1,9 @@
+{
+  "widgets": [
+    "button",
+    "title",
+    "bool",
+    "icon-button",
+    "slider"
+  ]
+}
