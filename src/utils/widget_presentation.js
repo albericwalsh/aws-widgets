@@ -21,6 +21,11 @@ function buildCodeExample(id, parameters) {
   const tag = `aws-${id}`;
   if (!parameters) return `<${tag}></${tag}>`;
 
+  // if caller provided explicit HTML content (for slot-based widgets), use it raw
+  if (parameters.content && typeof parameters.content === 'string') {
+    return parameters.content;
+  }
+
   // Build a simple attribute example using first available parameter values
   const attrs = [];
   for (const [key, val] of Object.entries(parameters)) {

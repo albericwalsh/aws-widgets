@@ -44,7 +44,8 @@
       "parameters": { 
         "min": 0, 
         "max": 100,
-        "value": 50 
+        "value": 50,
+        "mode": ["edit","view"]
         } 
       },
     { 
@@ -74,8 +75,17 @@
         "show_values": false
       }
     },
-    { "id": "progress-circle" },
-    { "id": "input", "parameters": { "types": ["text","email","number","password","date","url","telephone"] } },
+    {
+      "id": "selector",
+      "desactivable": true,
+      "parameters": {
+        "content": "\n    <aws-option data-id=\"light\">Light</aws-option>\n    <aws-option data-id=\"dark\"><img src=\"/public/dark.svg\" alt=\"\"> Dark</aws-option>\n    <aws-option data-id=\"system\">System</aws-option>\n",
+        "id": "themePicker",
+        "mode": ["edit","view"]
+      }
+    },
+    { "id": "progress-circle", "parameters": { "particles": 20, "speed": 1, "radius": 20, "particle-size-multiplier": 0.5, "size": 60, "color": "" } },
+    { "id": "input", "desactivable": true, "parameters": { "types": ["text","email","number","password","date","url","telephone"], "mode": ["edit","view"] } },
     { "id": "context" }
   ]
 }

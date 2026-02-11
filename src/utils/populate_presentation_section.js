@@ -32,11 +32,18 @@ export function populatePresentationSection(section, widget, values) {
       if (key === 'label' || key === 'text') {
         refs.liveEl.textContent = val;
       } else if (key === 'content') {
-        // allow widgets that render HTML (like `table`) to inject markup
-        if (id === 'table') refs.liveEl.innerHTML = val || '';
+        // allow widgets that render HTML (slot-based) to inject markup
+        const slotWidgets = new Set(['table','selector']);
+        if (slotWidgets.has(id)) refs.liveEl.innerHTML = val || '';
         else refs.liveEl.textContent = val;
       } else if (typeof val === 'boolean') {
         if (val) refs.liveEl.setAttribute(key, ''); else refs.liveEl.removeAttribute(key);
+      } else if (key === 'types' && id === 'input') {
+        // demo parameter 'types' (array) maps to the actual attribute 'type' on aws-input
+        // use the first type as the initial/default selection
+        let chosen = val;
+        if (Array.isArray(val)) chosen = val[0] || '';
+        if (chosen !== null && chosen !== undefined && chosen !== '') refs.liveEl.setAttribute('type', String(chosen)); else refs.liveEl.removeAttribute('type');
       } else if (val !== null && val !== undefined && val !== '') {
         refs.liveEl.setAttribute(key, String(val));
       } else {
@@ -51,14 +58,24 @@ export function populatePresentationSection(section, widget, values) {
     let inner = '';
     for (const [k, v] of Object.entries(values)) {
       if (k === 'label' || k === 'text' || k === 'content') { inner = v; continue; }
-      if (typeof v === 'boolean') { if (v) attrs.push(k); }
-      else if (v !== null && v !== undefined && v !== '') attrs.push(`${k}="${escapeHtml(String(v))}"`);
+      const attrName = (id === 'input' && k === 'types') ? 'type' : k;
+      let valForAttr = v;
+      if (id === 'input' && k === 'types' && Array.isArray(v)) valForAttr = v[0];
+      if (typeof v === 'boolean') { if (v) attrs.push(attrName); }
+      else if (valForAttr !== null && valForAttr !== undefined && valForAttr !== '') attrs.push(`${attrName}="${escapeHtml(String(valForAttr))}"`);
     }
     const openTag = attrs.length ? `<${tag} ${attrs.join(' ')}>` : `<${tag}>`;
-    const example = `${openTag}${escapeHtml(inner)}<\/${tag}>`;
-    // show literal angle brackets in the demo code (convert entities back)
-    refs.codeBlock.textContent = unescapeHtml(example);
-    try { hljs && hljs.highlightElement(refs.codeBlock); } catch(_) {}
+    // build example code for display: unescape inner so special chars show (e.g. <, >, ")
+    const innerForCode = (typeof inner === 'string') ? unescapeHtml(String(inner)) : '';
+    const example = `${openTag}${innerForCode}<\/${tag}>`;
+    refs.codeBlock.textContent = example;
+    try {
+      if (hljs && refs.codeBlock) {
+        try { if (refs.codeBlock.querySelector && refs.codeBlock.querySelector('*')) refs.codeBlock.textContent = refs.codeBlock.textContent; } catch(e){}
+        try { delete refs.codeBlock.dataset.highlighted; } catch(e){}
+        try { hljs.highlightElement(refs.codeBlock); } catch(e){}
+      }
+    } catch(_) {}
     applyValues();
   }
 

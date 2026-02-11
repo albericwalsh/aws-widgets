@@ -52,12 +52,22 @@ export async function getFlagEmoji(countryCode) {
 }
 
 export function copi_btn(copyBtn, value) {
+    if(!copyBtn) return;
     copyBtn.addEventListener("click", async () => {
-        if (!value) return;
         try {
-            await navigator.clipboard.writeText(value);
-            copyBtn.classList.add("copied");
-            setTimeout(() => copyBtn.classList.remove("copied"), 700);
+            const text = (typeof value === 'function') ? String(value()) : String(value || '');
+            if (!text) return;
+            await navigator.clipboard.writeText(text);
+            // visual feedback: temporarily replace inner content with a check icon
+            try {
+                const previous = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span class="material-icons">check</span>';
+                setTimeout(() => { copyBtn.innerHTML = previous; }, 800);
+            } catch (e) {
+                // fallback to toggling class
+                copyBtn.classList.add("copied");
+                setTimeout(() => copyBtn.classList.remove("copied"), 800);
+            }
         } catch (err) {
             console.error("Erreur copie:", err);
         }

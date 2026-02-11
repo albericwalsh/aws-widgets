@@ -6,6 +6,19 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Wrap hljs.highlightElement to sanitize code blocks automatically
+        (function(){
+            if(window.hljs && typeof hljs.highlightElement === 'function'){
+                const _orig = hljs.highlightElement.bind(hljs);
+                hljs.highlightElement = function(block){
+                    try{ if(block && block.querySelector && block.querySelector('*')) block.textContent = block.textContent; }catch(e){}
+                    try{ if(block && block.dataset) delete block.dataset.highlighted; }catch(e){}
+                    return _orig(block);
+                };
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="./public/styles/demo.css">
     <script type="module">import "./src/index.js"</script>
 </head>
@@ -49,8 +62,17 @@
             container.appendChild(wrapper);
         }
 
-        // Highlight generated code blocks
-        container.querySelectorAll('pre code, code.aws-widget-code').forEach(block => hljs.highlightElement(block));
+        // Highlight generated code blocks (ensure no unescaped HTML, clear previous highlight flag)
+        container.querySelectorAll('pre code, code.aws-widget-code').forEach(block => {
+            try { 
+                // if the code element contains element children (unescaped HTML), convert to plain text
+                if (block.querySelector && block.querySelector('*')) {
+                    block.textContent = block.textContent;
+                }
+            } catch(e) {}
+            try { delete block.dataset.highlighted; } catch(e) { /* ignore */ }
+            try { hljs.highlightElement(block); } catch(e) {}
+        });
     })();
 </script>
 

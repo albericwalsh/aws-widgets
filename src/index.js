@@ -23,7 +23,6 @@ async function loadWidgets() {
                 const moduleUrl = new URL(`./${name}/${name}.js`, import.meta.url).href;
                 try {
                     await import(moduleUrl);
-                    console.log(`Widget loaded: ${name}`);
                 } catch(e) {
                     console.error(`Failed to load widget ${name}:`, e);
                 }
@@ -32,8 +31,6 @@ async function loadWidgets() {
 
     } catch (err) {
         console.error("Failed loading widgets:", err);
-    } finally {
-        console.log("Finished loading widgets.");
     }
 }
 

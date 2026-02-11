@@ -1,188 +1,166 @@
-import { loadFile } from "../utils/load_file.js";
+
 import { copi_btn } from "./input_utils.js";
 
 class SP_Input extends HTMLElement {
     constructor() {
         super();
-        this.shadow = this.attachShadow({ mode: "open" });
-        this.listeners = new Map(); // Pour détacher proprement les listeners
+        this.attachShadow({ mode: "open" });
+        this.listeners = new Map();
+        this._renderRaf = null;
 
-        const htmlUrl = new URL("./input.html", import.meta.url).href;
-        const cssUrl  = new URL("./input.css", import.meta.url).href;
+        const hostCss = `:host{display:inline-block}
+    .sp-input-wrapper{display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid transparent}
+    .sp-input-wrapper:hover,:host([mode="edit"]) .sp-input-wrapper{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.06)}
+    .sp-input-content{display:flex;align-items:center;gap:8px;min-width:80px}
+    .input{flex:0 1 220px;min-width:80px;max-width:520px;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));color:#fff;font:inherit;font-size:0.95rem;outline:none}
+    .input:focus{border-color:rgba(100,150,255,0.9);box-shadow:0 4px 14px rgba(100,150,255,0.08)}
+    .output{padding:8px 10px;border-radius:12px;color:#fff}
+    `;
 
-        this.ready = loadFile(htmlUrl, cssUrl, this.shadow)
-            .then(() => {
-                this.isReady = true;
-                this.render(); // premier rendu
-            });
+        const hostHtml = `<div class="sp-input-wrapper"><div class="sp-input-content" id="root"></div></div>`;
+        this.shadowRoot.innerHTML = `<style>${hostCss}</style>${hostHtml}`;
+        this.isReady = true;
     }
 
     static get observedAttributes() {
-        return ["type", "value"];
+        return ["type", "value", "mode", "disabled"];
     }
 
     connectedCallback() {
-        if (this.isReady) this.render();
+        // Avoid initial render here; rendering is triggered by attribute changes
+        // (the demo sets attributes after insertion). This prevents duplicate
+        // fragments from being appended when attributes are set sequentially.
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (!this.isReady) return;
-
-        // Si c'est le type, rerender complet
-        if (name === "type" && oldValue !== newValue) {
-            this.render();
-        }
-
-        // Si c'est la valeur, mettre à jour le setter
-        if (name === "value" && oldValue !== newValue) {
+        if (oldValue === newValue) return;
+        if (name === "value") {
             this.value = newValue;
+            return;
         }
+        // debounce multiple attribute changes (demo sets several attrs in sequence)
+        if (this._renderRaf) cancelAnimationFrame(this._renderRaf);
+        this._renderRaf = requestAnimationFrame(() => { this._renderRaf = null; this.render(); });
     }
 
-    // Retourne l'élément input réel
     _getInputElement(id = "value") {
-        const root = this.shadow.getElementById("root");
+        const root = this.shadowRoot.querySelector("#root");
         if (!root) return null;
-
         let input = root.querySelector(`#${id}`);
         if (!input) input = root.querySelector("input, textarea, select, .output");
         return input;
     }
 
     get value() {
-        const root = this.shadow.getElementById("root");
+        const root = this.shadowRoot.querySelector("#root");
         if (!root) return "";
-
         const type = this.getAttribute("type");
-        if (type === "phone") {
+        if (type === "phone" || type === "telephone") {
             const dial = root.querySelector("#dialphone")?.textContent ?? "";
             const input = root.querySelector(".input")?.value ?? "";
             return `${dial} ${input}`.trim();
         }
-
-        if (type === "license") {
-            return root.querySelector("#value")?.getRealValue?.() ?? "";
-        }
-
+        if (type === "license") return root.querySelector("#value")?.getRealValue?.() ?? "";
         const el = this._getInputElement("value");
         return el?.value ?? el?.textContent ?? "";
     }
 
     set value(v) {
-        const root = this.shadow.getElementById("root");
+        const root = this.shadowRoot.querySelector("#root");
         if (!root) return;
-
         const type = this.getAttribute("type");
-        if (type === "phone") {
+        if (type === "phone" || type === "telephone") {
             const dialEl = root.querySelector("#dialphone");
             const inputEl = root.querySelector(".input");
             if (dialEl && inputEl) {
-                const parts = v.split(" ");
+                const parts = String(v || "").split(" ");
                 dialEl.textContent = parts[0] || "";
                 inputEl.value = parts.slice(1).join(" ") || "";
             }
             return;
         }
-
         if (type === "license") {
             const el = root.querySelector("#value");
             if (el?.setValue) el.setValue(v);
             return;
         }
-
         const el = this._getInputElement("value");
         if (!el) return;
-
         if ("value" in el) el.value = v;
         else el.textContent = v;
     }
 
+    get type() {
+        return this.getAttribute("type");
+    }
+    set type(v) {
+        if (v === null || v === undefined) this.removeAttribute("type");
+        else this.setAttribute("type", String(v));
+    }
+
+    get mode() {
+        return this.getAttribute("mode");
+    }
+    set mode(v) {
+        if (v === null || v === undefined) this.removeAttribute("mode");
+        else this.setAttribute("mode", String(v));
+    }
+
+    get disabled() {
+        return this.hasAttribute("disabled");
+    }
+    set disabled(v) {
+        if (v) this.setAttribute("disabled", "");
+        else this.removeAttribute("disabled");
+    }
+
     async render() {
-        await this.ready;
-        const root = this.shadow.getElementById("root");
+        const root = this.shadowRoot.querySelector("#root");
         if (!root) return;
-
-        // Préserver les valeurs existantes
-        const currentValue = this.value;
-
-        root.innerHTML = ""; // vider le contenu
-
+        const preserved = this.value;
+        root.innerHTML = "";
         const type = this.getAttribute("type") || "text";
-        let module;
-        let fragment;
-
+        const rawMode = this.getAttribute("mode") || "input";
+        const mode = rawMode === "edit" ? "input" : rawMode === "view" ? "output" : rawMode;
         try {
-            switch (type) {
-                case "phone":
-                    module = await import("./telephone/telephone.js");
-                    ({ fragment } = await module.create_element());
-                    root.appendChild(fragment);
-                    this._initPhone(root);
-                    break;
+            // map 'phone' -> telephone folder
+            const importPathCandidates = [];
+            if (type === "phone") importPathCandidates.push("./telephone/telephone.js");
+            importPathCandidates.push(`./${type}/${type}.js`);
+            importPathCandidates.push(`./${type}.js`);
 
-                case "email":
-                    module = await import("./email/email.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "number":
-                    module = await import("./number/number.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "password":
-                    module = await import("./password/password.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "url":
-                    module = await import("./url/url.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "date":
-                    module = await import("./date/date.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "license":
-                    module = await import("./license/license.js");
-                    fragment = await module.create_element();
-                    root.appendChild(fragment);
-                    break;
-
-                case "text":
-                default:
-                    module = await import("./text/text.js");
-                    fragment = await module.create_element({
-                        mode: this.getAttribute("mode") || "input",
-                        value: currentValue || this.getAttribute("value") || ""
-                    });
-                    root.appendChild(fragment);
-                    break;
+            let module = null;
+            for (const p of importPathCandidates) {
+                try {
+                    module = await import(p);
+                    if (module) break;
+                } catch (e) {
+                    // try next
+                }
             }
+            if (!module) throw new Error(`No module found for type=${type}`);
 
-            // Restaurer la valeur si nécessaire
-            if (currentValue) this.value = currentValue;
+            const res = await module.create_element({ mode, disabled: this.hasAttribute("disabled"), value: preserved || this.getAttribute("value") || "" });
+            const fragment = res?.fragment || res;
+            if (fragment) root.appendChild(fragment);
 
+            // initialize telephone-like behaviors if present
+            if (type === "telephone" || type === "phone") this._initPhone(root);
+
+            if (preserved) this.value = preserved;
         } catch (err) {
-            console.error("Erreur lors du render de SP_Input:", err);
+            console.error("[aws-input] render error:", err);
+            root.textContent = "";
         }
     }
 
     _initPhone(root) {
-        const selector = root.querySelector("sp-selector");
+        const selector = root.querySelector("aws-selector");
         const dial = root.querySelector("#dialphone");
         const input = root.querySelector(".input");
-
         if (!selector || !dial || !input) return;
 
-        // Supprimer anciens listeners
         this._removeListeners(input);
         this._removeListeners(selector);
 
@@ -207,29 +185,25 @@ class SP_Input extends HTMLElement {
         this.listeners.set(input, inputListener);
 
         const selectorListener = e => {
-            dial.textContent = e.detail.value.col2;
-            input.dataset.format = e.detail.value.format;
+            dial.textContent = e.detail?.value?.col2 || "";
+            input.dataset.format = e.detail?.value?.format || input.dataset.format || "";
             input.value = "";
         };
         selector.addEventListener("change", selectorListener);
         this.listeners.set(selector, selectorListener);
 
-        // Copy button
         const copyBtn = root.querySelector("#copy");
-        if (copyBtn) {
-            copi_btn(copyBtn, () => `${dial.textContent} ${input.value}`);
-        }
-
-        // Initialisation du format
-        if (selector.value) input.dataset.format = selector.value.format;
+        if (copyBtn) copi_btn(copyBtn, () => `${dial.textContent} ${input.value}`);
     }
 
     _removeListeners(el) {
         if (!this.listeners.has(el)) return;
-        el.removeEventListener("input", this.listeners.get(el));
-        el.removeEventListener("change", this.listeners.get(el));
+        const fn = this.listeners.get(el);
+        el.removeEventListener("input", fn);
+        el.removeEventListener("change", fn);
         this.listeners.delete(el);
     }
 }
 
 customElements.define("aws-input", SP_Input);
+export { SP_Input };

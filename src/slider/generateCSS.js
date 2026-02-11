@@ -66,5 +66,34 @@ export function generateCSS(theme) {
         input[type="range"]:disabled::-moz-range-thumb {
             cursor: not-allowed;
         }
+
+        /* View mode: non-interactive and hide the thumb to avoid confusion */
+        :host([mode="view"]) input[type="range"],
+        :host([mode="view"]) input[type="range"]:not(:disabled) {
+            opacity: 0.95;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        :host([mode="view"]) input[type="range"]::-webkit-slider-thumb {
+            visibility: hidden;
+        }
+        :host([mode="view"]) input[type="range"]::-moz-range-thumb {
+            visibility: hidden;
+        }
+
+        /* Value display for view mode */
+        .aws-slider-value{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:64px;
+            padding:8px 12px;
+            border-radius:8px;
+            background: rgba(0,0,0,0.04);
+            color: inherit;
+            font-weight: 600;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+        }
     `;
 }
