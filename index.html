@@ -21,7 +21,13 @@
     </script>
     <link rel="stylesheet" href="./styles/demo.css">
     <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script> -->
-    <script type="module">import "./src/index.js"</script>
+    <script type="module">
+        // Import built ES bundle (as you'd do from another project / CDN).
+        // Import from GitHub CDN (jsDelivr) so demo matches external consumption.
+        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/aws-widgets.es.js';
+        // Ensure widgets are registered before rendering the demo
+        await initWidgets();
+    </script>
 </head>
 <body>
 
