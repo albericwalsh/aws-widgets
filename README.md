@@ -281,3 +281,43 @@ Tableau stylé, avec `<aws-table-head>` et `<aws-table-body>`.
 ## Démonstration
 
 Ouvrir `demo.html` pour voir tous les composants en action.
+
+---
+
+## Utilisation depuis le repository / CDN
+
+Vous pouvez consommer directement le bundle publié dans `dist/` via jsDelivr (branche `main`):
+
+- Import ES (module):
+
+```html
+<script type="module">
+	import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/aws-widgets.es.js';
+	initWidgets();
+</script>
+```
+
+- Script tag global (module):
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/aws-widgets.es.js"></script>
+<script>
+	// après inclusion, appeler la fonction exportée si nécessaire
+	// note: en mode module, importer est préférable
+</script>
+```
+
+### Via npm
+
+Après publication sur npm :
+
+```bash
+npm install aws-widgets
+```
+
+```js
+import { initWidgets } from 'aws-widgets';
+initWidgets();
+```
+
+Remarque: la fonction d'initialisation est `initWidgets()` ; les widgets restent modulaires et peuvent être initialisés manuellement.
