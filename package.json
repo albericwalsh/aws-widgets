@@ -1,12 +1,31 @@
 {
   "name": "aws-widgets",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "description": "Bibliothèque de Web Components réutilisables (AWS-style widgets).",
+  "main": "dist/aws-widgets.cjs.js",
+  "module": "dist/aws-widgets.es.js",
+  "exports": {
+    "import": "./dist/aws-widgets.es.js",
+    "require": "./dist/aws-widgets.cjs.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/albericwalsh/aws-widgets.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "vite": "^7.2.4"
