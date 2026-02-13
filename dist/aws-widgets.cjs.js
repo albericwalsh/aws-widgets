@@ -1,1 +1,0 @@
-"use strict";Object.defineProperties(exports,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}});const e=require("./license-BuCx_UK2.cjs");exports.default=e.undefined;exports.initWidgets=e.initWidgets;
