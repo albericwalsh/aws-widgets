@@ -42,3 +42,10 @@ jobs:
           asset_path: dist/aws-widgets.cjs.js
           asset_name: aws-widgets.cjs.js
           asset_content_type: application/javascript
+      - name: Publish to npm (optional)
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm publish --access public
