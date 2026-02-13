@@ -20,6 +20,16 @@
         })();
     </script>
     <link rel="stylesheet" href="./styles/demo.css">
+    <style>
+    .readme-panel{max-width:980px;margin:16px auto;padding:0 12px}
+    .readme-toggle{background:#0b74de;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+    .readme-content{margin-top:12px;background:linear-gradient(180deg,#0f1724 0%, #071129 100%);color:#e6eef8;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .readme-content h2{margin:0 0 8px 0}
+    .readme-content h3{margin:12px 0 6px}
+    .readme-content pre{background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;overflow:auto}
+    .readme-content code{color:#cfe8ff}
+    .readme-foot{opacity:0.85;font-size:0.9rem}
+    </style>
     <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script> -->
     <script type="module">
         // Import built ES bundle (as you'd do from another project / CDN).
@@ -37,6 +47,37 @@
     <p>Collection de Web Components réutilisables</p>
 </header>
 
+<!-- Documentation panel (stylised README) -->
+<section id="readme-panel" class="readme-panel">
+    <button id="readme-toggle" class="readme-toggle">📚 Documentation</button>
+    <div id="readme-content" class="readme-content" hidden>
+        <h2>AWS Widgets</h2>
+        <p>Bibliothèque de Web Components réutilisables pour vos projets front‑end. Chaque widget est autonome et thémable via <code>style.json</code>.</p>
+
+        <h3>Installation</h3>
+        <p>Via CDN (jsDelivr) — stable via tag : </p>
+        <pre><code>import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.1/dist/aws-widgets.es.js';
+await initWidgets();</code></pre>
+
+        <p>Via npm (après publication) :</p>
+        <pre><code>npm install aws-widgets
+import { initWidgets } from 'aws-widgets';
+await initWidgets();</code></pre>
+
+        <h3>Composants (exemples)</h3>
+        <ul>
+            <li><strong>&lt;aws-button&gt;</strong> — bouton stylé (variant, size).</li>
+            <li><strong>&lt;aws-input&gt;</strong> — champs texte / number / email / password.</li>
+            <li><strong>&lt;aws-slider&gt;</strong> — sélection numérique.</li>
+            <li>Et d'autres : <em>table, selector, progress-circle, icon-button, context</em>.</li>
+        </ul>
+
+        <h3>Publication</h3>
+        <p>Les releases sont créées via un tag Git (`vX.Y.Z`). Le workflow CI build+attache les bundles à la Release. Voir <code>BUILD_PUBLISH.md</code> pour la procédure complète.</p>
+
+        <p class="readme-foot">Voir le README complet sur le dépôt pour plus de détails.</p>
+    </div>
+</section>
 
 <div id="widget-showcase" class="widget-showcase"></div>
 
@@ -82,6 +123,19 @@
             try { hljs.highlightElement(block); } catch(e) {}
         });
     })();
+</script>
+
+<script>
+// Toggle readme panel
+const toggle = document.getElementById('readme-toggle');
+const content = document.getElementById('readme-content');
+if (toggle && content) {
+    toggle.addEventListener('click', () => {
+        const hidden = content.hasAttribute('hidden');
+        if (hidden) content.removeAttribute('hidden'); else content.setAttribute('hidden', '');
+        toggle.textContent = hidden ? '📚 Documentation (fermer)' : '📚 Documentation';
+    });
+}
 </script>
 
 </body>
