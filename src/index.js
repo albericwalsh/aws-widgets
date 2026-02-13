@@ -1,6 +1,5 @@
-async function loadWidgets() {
+export async function initWidgets() {
     try {
-        // JSON dans le même dossier que widgets.js
         const jsonUrl = new URL("./widgets.json", import.meta.url);
         const response = await fetch(jsonUrl);
 
@@ -15,16 +14,24 @@ async function loadWidgets() {
         const list = rawList.map(entry => typeof entry === 'string' ? { id: entry } : entry);
 
         // Expose normalized widget metadata for demos/tools
-        try { window.awsWidgets = list; } catch(_) { /* ignore in strict contexts */ }
+        try { if (typeof window !== 'undefined') window.awsWidgets = list; } catch(_) { /* ignore */ }
+
+        // Use import.meta.glob so Vite can statically analyze imports.
+        const widgetModules = import.meta.glob('./*/*.js');
 
         await Promise.all(
             list.map(async item => {
                 const name = item.id;
-                const moduleUrl = new URL(`./${name}/${name}.js`, import.meta.url).href;
-                try {
-                    await import(moduleUrl);
-                } catch(e) {
-                    console.error(`Failed to load widget ${name}:`, e);
+                const path = `./${name}/${name}.js`;
+                const loader = widgetModules[path];
+                if (loader) {
+                    try {
+                        await loader();
+                    } catch (e) {
+                        console.error(`Failed to load widget ${name}:`, e);
+                    }
+                } else {
+                    console.warn(`No module found for widget ${name} at ${path}`);
                 }
             })
         );
@@ -34,4 +41,4 @@ async function loadWidgets() {
     }
 }
 
-loadWidgets();
+export default undefined;

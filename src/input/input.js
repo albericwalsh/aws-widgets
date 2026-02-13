@@ -130,10 +130,15 @@ class SP_Input extends HTMLElement {
             importPathCandidates.push(`./${type}/${type}.js`);
             importPathCandidates.push(`./${type}.js`);
 
+            // Use import.meta.glob so Vite can statically analyse available modules
+            const moduleMap = Object.assign({}, import.meta.glob('./*/*.js'), import.meta.glob('./*.js'));
+
             let module = null;
             for (const p of importPathCandidates) {
+                const loader = moduleMap[p];
+                if (!loader) continue;
                 try {
-                    module = await import(p);
+                    module = await loader();
                     if (module) break;
                 } catch (e) {
                     // try next

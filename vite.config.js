@@ -5,11 +5,13 @@ export default defineConfig({
         lib: {
             entry: 'src/index.js',
             name: 'awsWidgets',
-            fileName: (format) => `index.js`
+            formats: ['es', 'cjs'],
+            fileName: (format) => `aws-widgets.${format}.js`
         },
         rollupOptions: {
             external: [],
             output: {
+                exports: 'named',
                 globals: {}
             }
         }
