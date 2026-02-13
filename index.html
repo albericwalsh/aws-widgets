@@ -24,7 +24,8 @@
     <script type="module">
         // Import built ES bundle (as you'd do from another project / CDN).
         // Import from GitHub CDN (jsDelivr) so demo matches external consumption.
-        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/aws-widgets.es.js';
+        // Use the tagged release for stability.
+        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.1/dist/aws-widgets.es.js';
         // Ensure widgets are registered before rendering the demo
         await initWidgets();
     </script>
