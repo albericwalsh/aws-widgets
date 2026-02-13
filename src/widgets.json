@@ -79,7 +79,7 @@
       "id": "selector",
       "desactivable": true,
       "parameters": {
-        "content": "\n    <aws-option data-id=\"light\">Light</aws-option>\n    <aws-option data-id=\"dark\"><img src=\"/public/dark.svg\" alt=\"\"> Dark</aws-option>\n    <aws-option data-id=\"system\">System</aws-option>\n",
+        "content": "\n    <aws-option data-id=\"light\">Light</aws-option>\n    <aws-option data-id=\"dark\"><img src=\"/vite.svg\" alt=\"\"> Dark</aws-option>\n    <aws-option data-id=\"system\">System</aws-option>\n",
         "id": "themePicker",
         "mode": ["edit","view"]
       }
