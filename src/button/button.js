@@ -11,6 +11,7 @@ export class AWSButton extends HTMLElement {
     }
 
     async connectedCallback() {
+        if(this._inited) { this._syncAll(); return; }
         const theme = await loadTheme();
         const style = generateCSS(theme);
 
@@ -37,6 +38,7 @@ export class AWSButton extends HTMLElement {
         });
 
         this._syncAll();
+        this._inited = true;
     }
 
     attributeChangedCallback() { this._syncAll(); }

@@ -11,6 +11,7 @@ export class AWSIconButton extends HTMLElement {
     }
 
     async connectedCallback() {
+        if(this._inited) { this._applyAttributes(); this._syncSize(); return; }
         this._theme = await loadTheme();
         const style = generateCSS(this._theme);
 
@@ -27,6 +28,7 @@ export class AWSIconButton extends HTMLElement {
 
         this._syncSize();
         this._applyAttributes();
+        this._inited = true;
     }
 
     attributeChangedCallback(name) {

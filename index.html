@@ -30,13 +30,9 @@
     .readme-content code{color:#cfe8ff}
     .readme-foot{opacity:0.85;font-size:0.9rem}
     </style>
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/index.js"></script> -->
+    <!-- Use local source modules in dev so changes in /src are reflected immediately -->
     <script type="module">
-        // Import built ES bundle (as you'd do from another project / CDN).
-        // Import from GitHub CDN (jsDelivr) so demo matches external consumption.
-        // Use the tagged release for stability.
-        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.1/dist/aws-widgets.es.js';
-        // Ensure widgets are registered before rendering the demo
+        import { initWidgets } from './src/index.js';
         await initWidgets();
     </script>
 </head>

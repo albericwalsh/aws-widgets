@@ -77,6 +77,69 @@ export function populatePresentationSection(section, widget, values) {
       }
     } catch(_) {}
     applyValues();
+
+    // ensure clicking the preview value opens URL in a new tab (works for <div> or <button>)
+    try{
+      if(!refs._previewClickDelegated){
+        // if the previewed widget is an input url in view mode, expose host cursor and delegate clicks
+        try{
+          const isInputWidget = (refs.liveEl && refs.liveEl.tagName && refs.liveEl.tagName.toLowerCase() === 'aws-input');
+          const typeAttr = refs.liveEl && refs.liveEl.getAttribute ? refs.liveEl.getAttribute('type') : null;
+          const modeAttr = refs.liveEl && refs.liveEl.getAttribute ? refs.liveEl.getAttribute('mode') : null;
+          if(isInputWidget && (typeAttr === 'url' || (refs.liveEl._type && refs.liveEl._type === 'url')) && modeAttr === 'view'){
+            // apply pointer to the whole preview region and host
+            try{ refs.liveWrap.style.setProperty && refs.liveWrap.style.setProperty('cursor','pointer','important'); }catch(_){ try{ refs.liveWrap.style.cursor='pointer'; }catch(_){} }
+            try{ refs.liveEl.style.setProperty && refs.liveEl.style.setProperty('cursor','pointer','important'); }catch(_){ try{ refs.liveEl.style.cursor='pointer'; }catch(_){} }
+            // try to set cursor on inner #value within shadowRoot if available
+            try{
+              const inner = refs.liveEl.shadowRoot && refs.liveEl.shadowRoot.querySelector ? refs.liveEl.shadowRoot.querySelector('#value') : null;
+              if(inner && inner.style){ try{ inner.style.setProperty && inner.style.setProperty('cursor','pointer','important'); }catch(_){ inner.style.cursor='pointer'; } inner.tabIndex = 0; try{ inner.setAttribute && inner.setAttribute('role','link'); }catch(_){} }
+              else {
+                // schedule a retry in case shadow content isn't ready yet
+                setTimeout(()=>{
+                  try{ const i2 = refs.liveEl.shadowRoot && refs.liveEl.shadowRoot.querySelector ? refs.liveEl.shadowRoot.querySelector('#value') : null; if(i2 && i2.style){ try{ i2.style.setProperty && i2.style.setProperty('cursor','pointer','important'); }catch(_){ i2.style.cursor='pointer'; } i2.tabIndex = 0; try{ i2.setAttribute && i2.setAttribute('role','link'); }catch(_){} } }catch(_){}
+                }, 50);
+              }
+            }catch(_){}
+          }
+        }catch(_){}
+
+        refs.liveWrap.addEventListener('click', (ev)=>{
+          try{
+            // ignore clicks on copy button or inside it
+            const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+            const isCopy = (path || []).some(n => n && (n.id === 'copy' || (n.tagName && String(n.tagName).toLowerCase() === 'aws-icon-button') || (n.classList && n.classList.contains && n.classList.contains('aws-copy-btn'))));
+            if(isCopy) return;
+
+            // first try: find any node with id='value' in the event path
+            const node = (path || []).find(n => n && n.id === 'value');
+            let txt = '';
+            if(node) txt = (node.textContent || node.value || '').trim();
+            // fallback: read from host's shadowRoot or host textContent
+            if(!txt && refs.liveEl){
+              try{
+                const inner = refs.liveEl.shadowRoot && refs.liveEl.shadowRoot.querySelector ? refs.liveEl.shadowRoot.querySelector('#value') : null;
+                if(inner) txt = (inner.textContent || inner.value || '').trim();
+                else {
+                  // also try light DOM query inside liveEl
+                  const inner2 = refs.liveEl.querySelector ? refs.liveEl.querySelector('#value') : null;
+                  if(inner2) txt = (inner2.textContent || inner2.value || '').trim();
+                }
+                // as ultimate fallback, use host attribute or textContent
+                if(!txt) txt = (refs.liveEl.getAttribute && refs.liveEl.getAttribute('value')) || (refs.liveEl.textContent || '').trim();
+              }catch(_){}
+            }
+
+            if(!txt) return;
+            const modeAttr2 = refs.liveEl.getAttribute && refs.liveEl.getAttribute('mode');
+            if(modeAttr2 && modeAttr2 !== 'view') return;
+            const u = new URL(txt);
+            if(window && window.open) window.open(u.toString(), '_blank', 'noopener');
+          }catch(_){}
+        });
+        refs._previewClickDelegated = true;
+      }
+    }catch(e){}
   }
 
   // Build controls

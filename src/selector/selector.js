@@ -15,6 +15,7 @@ class SP_Selector extends HTMLElement{
         if(name === 'mode') this._applyModeState();
     }
     async connectedCallback(){
+        if(this._inited) return;
         const theme = await loadTheme();
         const style = generateCSS(theme);
         const tpl = document.createElement('template');
@@ -46,6 +47,7 @@ class SP_Selector extends HTMLElement{
         // apply initial states
         this._applyDisabledState();
         this._applyModeState();
+        this._inited = true;
     }
     disconnectedCallback(){
             if(this._root) this._root.removeEventListener('keydown', this._onKeyDown);
@@ -128,6 +130,35 @@ class SP_Selector extends HTMLElement{
             if(!el) { this._selectedLabel.textContent = ''; return; }
             // copy display content from the original option
             try{ this._selectedLabel.innerHTML = el.innerHTML; } catch(e){ this._selectedLabel.textContent = el.textContent || ''; }
+        }
+
+        // public property accessors for value
+        get value(){
+            try{
+                if(!this._options || !this._options.length) return this.getAttribute('value') || null;
+                const sel = this._options.find(o=>o.hasAttribute('selected')) || null;
+                if(!sel) return null;
+                return sel.getAttribute('data-id') || sel.id || (sel.getAttribute('value') || (sel.textContent || '').trim()) || null;
+            }catch(e){ return null; }
+        }
+
+        set value(v){
+            try{
+                // reflect to attribute for external observation
+                if(v === null || v === undefined) { this.removeAttribute('value'); }
+                else this.setAttribute('value', String(v));
+
+                if(!this._options || !this._options.length) return;
+                // find matching option by data-id, id, value or text content
+                const found = this._options.find(o=>{
+                    const dataId = o.getAttribute('data-id');
+                    const id = o.id || null;
+                    const valAttr = o.getAttribute('value');
+                    const txt = (o.textContent||'').trim();
+                    return (dataId !== null && dataId == v) || (id && id == v) || (valAttr !== null && valAttr == v) || (txt && txt == v);
+                });
+                if(found) this._selectByElement(found);
+            }catch(e){}
         }
 
         _togglePopup(){

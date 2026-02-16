@@ -16,7 +16,7 @@ export async function create_element({ mode = 'input', value = '', disabled = fa
 
     const outputHtml = `
 <div id="favicon" class="favicon"><span class="fallback-emoji">🌐</span></div>
-<div id="value" class="output">${String(value || '')}</div>
+<button id="value" class="output" type="button">${String(value || '')}</button>
 <aws-icon-button id="copy" size="sm">content_copy</aws-icon-button>
 `;
 
@@ -63,6 +63,26 @@ export async function create_element({ mode = 'input', value = '', disabled = fa
         // output mode: show favicon for provided value and copy static value
         updateFavicon(value || '');
         if (copyBtn) copi_btn(copyBtn, () => String(value || ''));
+
+        // allow clicking the output to open the URL when not disabled
+        try{
+            if (input && !disabled) {
+                input.style.cursor = 'pointer';
+                input.setAttribute && input.setAttribute('role', 'link');
+                input.tabIndex = 0;
+                const openUrl = () => {
+                    try{
+                        const u = new URL((input.textContent || String(value || '')).trim());
+                        // open in new tab/window
+                        if (typeof window !== 'undefined' && window.open) window.open(u.toString(), '_blank', 'noopener');
+                    }catch(e){}
+                };
+                input.addEventListener && input.addEventListener('click', openUrl);
+                input.addEventListener && input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openUrl(); }
+                });
+            }
+        }catch(e){}
     }
 
     return fragment;
