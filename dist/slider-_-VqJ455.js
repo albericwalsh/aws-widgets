@@ -1,0 +1,72 @@
+import { loadTheme as a } from "./theme-C1Hn9FBu.js";
+import { generateCSS as l } from "./generateCSS-D9FesEh8.js";
+import { readNumber as s, normalizeStep as n } from "./field_helpers-UJaFiY_r.js";
+class u extends HTMLElement {
+  static get observedAttributes() {
+    return ["min", "max", "value", "step", "disabled", "mode"];
+  }
+  constructor() {
+    super(), this.attachShadow({ mode: "open" }), this._valueDisplay = null;
+  }
+  async connectedCallback() {
+    const t = await a(), e = l(t), i = document.createElement("template");
+    i.innerHTML = `
+            <style>${e}</style>
+            <input type="range" />
+        `, this.shadowRoot.appendChild(i.content.cloneNode(!0)), this._input = this.shadowRoot.querySelector("input"), this._sync(), this._applyModeState(), this._input.addEventListener("input", () => {
+      this.setAttribute("value", this._input.value), this.dispatchEvent(new CustomEvent("change", {
+        detail: { value: s(this._input.value) },
+        bubbles: !0,
+        composed: !0
+      })), this._valueDisplay && (this._valueDisplay.textContent = this._input.value);
+    });
+  }
+  attributeChangedCallback() {
+    this._sync(), this._applyModeState();
+  }
+  _sync() {
+    if (!this._input) return;
+    this._input.min = this.getAttribute("min") ?? 0, this._input.max = this.getAttribute("max") ?? 100, this._input.step = n(this.getAttribute("step")), this._input.value = this.getAttribute("value") ?? 50, this._valueDisplay && (this._valueDisplay.textContent = this._input.value);
+    const t = this.hasAttribute("disabled");
+    this._input.disabled = t, this._input.style.cursor = t ? "not-allowed" : "pointer";
+  }
+  _applyModeState() {
+    if (!this._input) return;
+    if ((this.getAttribute("mode") || "edit") === "view") {
+      this._input.disabled = !0, this._input.style.pointerEvents = "none", this._input.style.cursor = "default";
+      try {
+        this._input.style.display = "none";
+      } catch {
+      }
+      this._valueDisplay || (this._valueDisplay = document.createElement("div"), this._valueDisplay.className = "aws-slider-value", this._valueDisplay.textContent = this._input.value, this.shadowRoot.appendChild(this._valueDisplay));
+    } else {
+      const e = this.hasAttribute("disabled");
+      this._input.disabled = !!e, this._input.style.pointerEvents = "", this._input.style.cursor = e ? "not-allowed" : "pointer";
+      try {
+        this._input.style.display = "";
+      } catch {
+      }
+      if (this._valueDisplay) {
+        try {
+          this._valueDisplay.remove();
+        } catch {
+        }
+        this._valueDisplay = null;
+      }
+    }
+  }
+  get value() {
+    return this._input ? s(this._input.value) : s(this.getAttribute("value"));
+  }
+  set value(t) {
+    this.setAttribute("value", t);
+  }
+  // Convenience method used by demo and other code to read current numeric value
+  getValue() {
+    return this.value;
+  }
+}
+customElements.define("aws-slider", u);
+export {
+  u as AWSSlider
+};

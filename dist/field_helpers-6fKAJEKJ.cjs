@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});function e(r){if(r==null)return"any";const n=Number(r);return isNaN(n)?r:n===0?"any":String(n)}function u(r){const n=Number(r);return isNaN(n)?null:n}exports.normalizeStep=e;exports.readNumber=u;

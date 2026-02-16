@@ -1,0 +1,198 @@
+function C(m) {
+  return String(m).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function x(m) {
+  return String(m).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+}
+function _(m, g, a) {
+  const y = g.id, h = g.parameters || {}, e = m._refs;
+  e.title.textContent = y, e.controls.innerHTML = "";
+  function w() {
+    Object.keys(a).forEach((t) => {
+      const o = a[t];
+      if (t === "label" || t === "text")
+        e.liveEl.textContent = o;
+      else if (t === "content")
+        (/* @__PURE__ */ new Set(["table", "selector"])).has(y) ? e.liveEl.innerHTML = o || "" : e.liveEl.textContent = o;
+      else if (typeof o == "boolean")
+        o ? e.liveEl.setAttribute(t, "") : e.liveEl.removeAttribute(t);
+      else if (t === "types" && y === "input") {
+        let c = o;
+        Array.isArray(o) && (c = o[0] || ""), c != null && c !== "" ? e.liveEl.setAttribute("type", String(c)) : e.liveEl.removeAttribute("type");
+      } else o != null && o !== "" ? e.liveEl.setAttribute(t, String(o)) : e.liveEl.removeAttribute(t);
+    });
+  }
+  function d() {
+    const t = `aws-${y}`, o = [];
+    let c = "";
+    for (const [l, u] of Object.entries(a)) {
+      if (l === "label" || l === "text" || l === "content") {
+        c = u;
+        continue;
+      }
+      const v = y === "input" && l === "types" ? "type" : l;
+      let i = u;
+      y === "input" && l === "types" && Array.isArray(u) && (i = u[0]), typeof u == "boolean" ? u && o.push(v) : i != null && i !== "" && o.push(`${v}="${C(String(i))}"`);
+    }
+    const p = o.length ? `<${t} ${o.join(" ")}>` : `<${t}>`, n = typeof c == "string" ? x(String(c)) : "", f = `${p}${n}</${t}>`;
+    e.codeBlock.textContent = f;
+    try {
+      if (hljs && e.codeBlock) {
+        try {
+          e.codeBlock.querySelector && e.codeBlock.querySelector("*") && (e.codeBlock.textContent = e.codeBlock.textContent);
+        } catch {
+        }
+        try {
+          delete e.codeBlock.dataset.highlighted;
+        } catch {
+        }
+        try {
+          hljs.highlightElement(e.codeBlock);
+        } catch {
+        }
+      }
+    } catch {
+    }
+    w();
+    try {
+      if (!e._previewClickDelegated) {
+        try {
+          const l = e.liveEl && e.liveEl.tagName && e.liveEl.tagName.toLowerCase() === "aws-input", u = e.liveEl && e.liveEl.getAttribute ? e.liveEl.getAttribute("type") : null, v = e.liveEl && e.liveEl.getAttribute ? e.liveEl.getAttribute("mode") : null;
+          if (l && (u === "url" || e.liveEl._type && e.liveEl._type === "url") && v === "view") {
+            try {
+              e.liveWrap.style.setProperty && e.liveWrap.style.setProperty("cursor", "pointer", "important");
+            } catch {
+              try {
+                e.liveWrap.style.cursor = "pointer";
+              } catch {
+              }
+            }
+            try {
+              e.liveEl.style.setProperty && e.liveEl.style.setProperty("cursor", "pointer", "important");
+            } catch {
+              try {
+                e.liveEl.style.cursor = "pointer";
+              } catch {
+              }
+            }
+            try {
+              const i = e.liveEl.shadowRoot && e.liveEl.shadowRoot.querySelector ? e.liveEl.shadowRoot.querySelector("#value") : null;
+              if (i && i.style) {
+                try {
+                  i.style.setProperty && i.style.setProperty("cursor", "pointer", "important");
+                } catch {
+                  i.style.cursor = "pointer";
+                }
+                i.tabIndex = 0;
+                try {
+                  i.setAttribute && i.setAttribute("role", "link");
+                } catch {
+                }
+              } else
+                setTimeout(() => {
+                  try {
+                    const r = e.liveEl.shadowRoot && e.liveEl.shadowRoot.querySelector ? e.liveEl.shadowRoot.querySelector("#value") : null;
+                    if (r && r.style) {
+                      try {
+                        r.style.setProperty && r.style.setProperty("cursor", "pointer", "important");
+                      } catch {
+                        r.style.cursor = "pointer";
+                      }
+                      r.tabIndex = 0;
+                      try {
+                        r.setAttribute && r.setAttribute("role", "link");
+                      } catch {
+                      }
+                    }
+                  } catch {
+                  }
+                }, 50);
+            } catch {
+            }
+          }
+        } catch {
+        }
+        e.liveWrap.addEventListener("click", (l) => {
+          try {
+            const u = l.composedPath ? l.composedPath() : l.path || [];
+            if ((u || []).some((s) => s && (s.id === "copy" || s.tagName && String(s.tagName).toLowerCase() === "aws-icon-button" || s.classList && s.classList.contains && s.classList.contains("aws-copy-btn")))) return;
+            const i = (u || []).find((s) => s && s.id === "value");
+            let r = "";
+            if (i && (r = (i.textContent || i.value || "").trim()), !r && e.liveEl)
+              try {
+                const s = e.liveEl.shadowRoot && e.liveEl.shadowRoot.querySelector ? e.liveEl.shadowRoot.querySelector("#value") : null;
+                if (s) r = (s.textContent || s.value || "").trim();
+                else {
+                  const b = e.liveEl.querySelector ? e.liveEl.querySelector("#value") : null;
+                  b && (r = (b.textContent || b.value || "").trim());
+                }
+                r || (r = e.liveEl.getAttribute && e.liveEl.getAttribute("value") || (e.liveEl.textContent || "").trim());
+              } catch {
+              }
+            if (!r) return;
+            const E = e.liveEl.getAttribute && e.liveEl.getAttribute("mode");
+            if (E && E !== "view") return;
+            const A = new URL(r);
+            window && window.open && window.open(A.toString(), "_blank", "noopener");
+          } catch {
+          }
+        }), e._previewClickDelegated = !0;
+      }
+    } catch {
+    }
+  }
+  if (g.desactivable) {
+    const t = "disabled", o = document.createElement("div");
+    o.className = "control-group";
+    const c = document.createElement("label");
+    c.className = "control-label", c.textContent = t, o.appendChild(c);
+    const p = document.createElement("input");
+    p.type = "checkbox", p.className = "control-input";
+    const n = a && typeof a[t] < "u" ? a[t] : h && typeof h[t] < "u" ? h[t] : !1;
+    p.checked = !!n, a[t] = !!n, p.addEventListener("change", () => {
+      a[t] = p.checked, d();
+    }), o.appendChild(p), e.controls.appendChild(o);
+  }
+  for (const [t, o] of Object.entries(h)) {
+    const c = document.createElement("div");
+    c.className = "control-group";
+    const p = document.createElement("label");
+    p.className = "control-label", p.textContent = t, c.appendChild(p);
+    let n;
+    if (Array.isArray(o)) {
+      n = document.createElement("select"), n.className = "control-input";
+      for (const f of o) {
+        const l = document.createElement("option");
+        l.value = f, l.textContent = f, n.appendChild(l);
+      }
+      n.value = a[t], n.addEventListener("change", () => {
+        a[t] = n.value, d();
+      });
+    } else typeof o == "boolean" ? (n = document.createElement("input"), n.type = "checkbox", n.className = "control-input", n.checked = !!a[t], n.addEventListener("change", () => {
+      a[t] = n.checked, d();
+    })) : typeof o == "number" ? (n = document.createElement("input"), n.type = "number", n.className = "control-input", n.value = a[t], n.addEventListener("input", () => {
+      a[t] = Number(n.value), d();
+    })) : t === "content" || t === "data" || t === "data_name" ? (n = document.createElement("textarea"), n.className = "control-input", n.rows = t === "data" ? 3 : 4, n.value = a[t] || "", n.addEventListener("input", () => {
+      a[t] = n.value, d();
+    })) : (n = document.createElement("input"), n.type = "text", n.className = "control-input", n.value = a[t], n.addEventListener("input", () => {
+      a[t] = n.value, d();
+    }));
+    c.appendChild(n), e.controls.appendChild(c);
+  }
+  e.copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(e.codeBlock.textContent);
+      const t = e.copyBtn.innerHTML;
+      e.copyBtn.innerHTML = '<span class="material-icons">check</span>', setTimeout(() => {
+        e.copyBtn.innerHTML = t;
+      }, 1200);
+    } catch {
+      e.copyBtn.innerHTML = '<span class="material-icons">error</span>', setTimeout(() => {
+        e.copyBtn.innerHTML = '<span class="material-icons">content_copy</span>';
+      }, 1200);
+    }
+  }), d();
+}
+export {
+  _ as populatePresentationSection
+};
