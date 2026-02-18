@@ -18,6 +18,24 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Commit built `dist/` and update tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # We're in a detached HEAD at the tag commit; create a new commit containing dist
+          git checkout --detach
+          git add -f dist
+          if git diff --staged --quiet; then
+            echo "No changes to commit for dist"
+          else
+            git commit -m "chore(release): include built dist for ${GITHUB_REF_NAME}"
+          fi
+          # Force-update the tag to point at the new commit (or leave as-is if no new commit)
+          git tag -f ${GITHUB_REF_NAME}
+          git push origin refs/tags/${GITHUB_REF_NAME} --force
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1

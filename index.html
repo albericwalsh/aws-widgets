@@ -30,9 +30,9 @@
     .readme-content code{color:#cfe8ff}
     .readme-foot{opacity:0.85;font-size:0.9rem}
     </style>
-    <!-- Use local source modules in dev so changes in /src are reflected immediately -->
+    <!-- For testing CDN import in demo dev: import specific release from jsDelivr -->
     <script type="module">
-        import { initWidgets } from './src/index.js';
+        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@main/dist/aws-widgets.es.js';
         await initWidgets();
     </script>
 </head>
