@@ -43,7 +43,12 @@ export async function create_element({ mode = 'input', value = '', disabled = fa
 
     let visible   = false;
     let realValue = ""; // vraie licence sans tirets
-
+    // initialize from provided value when present
+    try {
+        if (value) {
+            realValue = String(value).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+        }
+    } catch (e) {}
     const format = (v) => (v.match(/.{1,4}/g) || []).join("-");
     const mask = () => "XXXX-XXXX-XXXX";
 
@@ -72,8 +77,8 @@ export async function create_element({ mode = 'input', value = '', disabled = fa
     /* COPY → vraie valeur */
     if (mode === 'input') {
         copi_btn(copy, () => realValue);
-        // état initial
-        input.value = mask();
+        // état initial (respecter valeur initiale passée): afficher la valeur formatée si fournie
+        input.value = realValue ? format(realValue) : mask();
         input.autocomplete = "off";
     } else {
         // output mode: copy static formatted or real value

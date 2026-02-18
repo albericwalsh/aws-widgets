@@ -1,5 +1,6 @@
 
 import { copi_btn } from "./input_utils.js";
+import { setWidgetValue, getWidgetValue } from "../utils/value_helpers.js";
 
 class SP_Input extends HTMLElement {
     constructor() {
@@ -63,7 +64,7 @@ class SP_Input extends HTMLElement {
         }
         if (type === "license") return root.querySelector("#value")?.getRealValue?.() ?? "";
         const el = this._getInputElement("value");
-        return el?.value ?? el?.textContent ?? "";
+        return getWidgetValue(el);
     }
 
     set value(v) {
@@ -82,13 +83,12 @@ class SP_Input extends HTMLElement {
         }
         if (type === "license") {
             const el = root.querySelector("#value");
-            if (el?.setValue) el.setValue(v);
+            setWidgetValue(el, v);
             return;
         }
         const el = this._getInputElement("value");
         if (!el) return;
-        if ("value" in el) el.value = v;
-        else el.textContent = v;
+        setWidgetValue(el, v);
     }
 
     get type() {

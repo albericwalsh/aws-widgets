@@ -1,5 +1,6 @@
 import { loadTheme } from "../utils/theme.js";
 import { generateCSS } from "./generateCSS.js";
+import { getWidgetValue, setWidgetValue } from "../utils/value_helpers.js";
 
 class SP_search extends HTMLElement {
     static get observedAttributes() {
@@ -127,8 +128,8 @@ class SP_search extends HTMLElement {
     }
 
     // external API
-    getValue() { return this._input ? this._input.value : ''; }
-    setValue(v) { if (this._input) this._input.value = v; this.setAttribute('value', v); }
+    getValue() { return getWidgetValue(this._input); }
+    setValue(v) { setWidgetValue(this._input, v); this.setAttribute('value', v); }
 }
 
 customElements.define('aws-search', SP_search);
