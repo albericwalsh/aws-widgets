@@ -1,0 +1,80 @@
+const o = {
+  "aws-accent": "#10b981",
+  "aws-muted": "#6b7280",
+  "aws-subtext": "rgba(255,255,255,0.7)",
+  "aws-chart-value": "#ffffff",
+  "aws-bg": "#ffffff",
+  "aws-foreground": "#111827"
+};
+function t() {
+  return Object.assign({}, o);
+}
+function e(C = {}) {
+  Object.keys(C).forEach((A) => {
+    const g = A.replace(/^--/, "");
+    o[g] = C[A];
+  });
+}
+function m(C, A) {
+  const g = C.replace(/^--/, "");
+  o[g] = A;
+}
+function n(C = {}) {
+  const A = Object.assign({}, o, C);
+  return Object.entries(A).map(([g, I]) => `--${g}: ${I};`).join(" ");
+}
+const N = {
+  getTheme: t,
+  setTheme: e,
+  updateVar: m,
+  cssVarsString: n
+}, j = t, Z = e;
+function c(C, A = {}) {
+  !C || !C.style || Object.entries(A).forEach(([g, I]) => {
+    const i = g.replace(/^--?/, "--");
+    C.style.setProperty(i, I);
+  });
+}
+function a(C, A = {}) {
+  try {
+    if (!C || !C.shadowRoot) return;
+    const g = "aws-theme-overrides";
+    let I = C.shadowRoot.querySelector(`style[data-${g}]`);
+    const i = [];
+    i.push("svg, svg * { fill: var(--aws-foreground) !important; stroke: var(--aws-foreground) !important; }"), i.push(":host, :host * { color: var(--aws-foreground) !important; }");
+    const s = i.join(`
+`);
+    I ? I.textContent = s : (I = document.createElement("style"), I.setAttribute(`data-${g}`, "1"), I.textContent = s, C.shadowRoot.prepend(I));
+  } catch {
+  }
+}
+function w(C = {}) {
+  const A = Array.from(document.querySelectorAll("*"));
+  let g = 0;
+  for (const I of A)
+    try {
+      if (!I.tagName) continue;
+      I.tagName.startsWith("AWS-") && (c(I, C), a(I, C), g++);
+    } catch {
+    }
+  try {
+    console.info("applyThemeToAllHosts: updated", g, "hosts"), g > 0 && console.debug("sample host tags:", Array.from(document.querySelectorAll("*")).filter((I) => I.tagName && I.tagName.startsWith("AWS-")).slice(0, 10).map((I) => I.tagName));
+  } catch {
+  }
+  return g;
+}
+async function d() {
+  return await (await fetch(new URL("data:application/json;base64,ew0KICAiZm9udHMiOiB7DQogICAgInRpdGxlIjogIkludGVyLCBzZXJpZiIsDQogICAgImJvZHkiOiAiSW50ZXIsIHNhbnMtc2VyaWYiDQogIH0sDQogICJjb2xvcnMiOiB7DQogICAgInRleHRQcmltYXJ5IjogIiNmZmZmZmYiLA0KICAgICJ0ZXh0U2Vjb25kYXJ5IjogInJnYmEoMjU1LDI1NSwyNTUsMC44KSIsDQogICAgImJhY2tncm91bmQiOiAiIzFlMWUxZSINCiAgfSwNCiAgIndpZGdldHMiOiB7DQogICAgImJ1dHRvbiI6IHsNCiAgICAgICJwcmltYXJ5QmciOiAicmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIsDQogICAgICAic2Vjb25kYXJ5QmciOiAidHJhbnNwYXJlbnQiLA0KICAgICAgImdob3N0QmciOiAibm9uZSIsDQogICAgICAiY29sb3IiOiAiI2ZmZmZmZiIsDQogICAgICAiYm9yZGVyIjogInJnYmEoMjU1LDI1NSwyNTUsMC4yNSkiLA0KICAgICAgImhvdmVyVHJhbnNmb3JtIjogInRyYW5zbGF0ZVkoLTJweCkiLA0KICAgICAgInBhZGRpbmciOiB7DQogICAgICAgICJzbSI6ICI4cHggMTZweCIsDQogICAgICAgICJtZCI6ICIxMnB4IDI4cHgiLA0KICAgICAgICAibGciOiAiMTZweCAzNnB4Ig0KICAgICAgfSwNCiAgICAgICJib3JkZXJSYWRpdXMiOiAiNDBweCINCiAgICB9LA0KICAgICJ0aXRsZSI6IHsNCiAgICAgICJmb250RmFtaWx5IjogIkludGVyLCBzZXJpZiIsDQogICAgICAiZm9udFNpemUiOiAiMi41cmVtIiwNCiAgICAgICJjb2xvciI6ICIjZmZmZmZmIg0KICAgIH0sDQogICAgInBhcmFncmFwaCI6IHsNCiAgICAgICJmb250RmFtaWx5IjogIkludGVyLCBzYW5zLXNlcmlmIiwNCiAgICAgICJmb250U2l6ZSI6ICIxcmVtIiwNCiAgICAgICJjb2xvciI6ICJyZ2JhKDI1NSwyNTUsMjU1LDAuOCkiDQogICAgfSwNCiAgICAiYm9vbCI6IHsNCiAgICAgICJ3cmFwcGVyTWluV2lkdGgiOiAiNTBweCIsDQogICAgICAidmlldyI6IHsNCiAgICAgICAgInBhZGRpbmciOiAiNHB4IDEwcHgiLA0KICAgICAgICAiYm9yZGVyUmFkaXVzIjogIjE2cHgiLA0KICAgICAgICAiZm9udFNpemUiOiAiMTNweCIsDQogICAgICAgICJjb2xvciI6ICJ3aGl0ZSIsDQogICAgICAgICJvbkJnIjogInJnYmEoMCwyNTUsMTIwLDAuMjUpIiwNCiAgICAgICAgIm9uQm9yZGVyIjogInJnYmEoMCwyNTUsMTIwLDAuNSkiLA0KICAgICAgICAib2ZmQmciOiAicmdiYSgyNTUsNjAsNjAsMC4yNSkiLA0KICAgICAgICAib2ZmQm9yZGVyIjogInJnYmEoMjU1LDYwLDYwLDAuNSkiLA0KICAgICAgICAicHVsc2VEdXJhdGlvbiI6ICIwLjM1cyIsDQogICAgICAgICJwdWxzZVNjYWxlIjogIjEuMiIsDQogICAgICAgICJwdWxzZU9wYWNpdHlTdGFydCI6ICIwLjciDQogICAgICB9LA0KICAgICAgInRvZ2dsZSI6IHsNCiAgICAgICAgIndpZHRoIjogIjQ4cHgiLA0KICAgICAgICAiaGVpZ2h0IjogIjI2cHgiLA0KICAgICAgICAiYm9yZGVyUmFkaXVzIjogIjIwcHgiLA0KICAgICAgICAiYmciOiAicmdiYSgyNTUsMjU1LDI1NSwwLjE1KSIsDQogICAgICAgICJib3JkZXIiOiAicmdiYSgyNTUsMjU1LDI1NSwwLjI1KSIsDQogICAgICAgICJhY3RpdmVTY2FsZSI6ICIwLjkyIiwNCiAgICAgICAgImFjdGl2ZU9wYWNpdHkiOiAiMC43NSIsDQogICAgICAgICJvbkJnIjogInJnYmEoMCwyNTUsMTUwLDAuMzUpIiwNCiAgICAgICAgIm9uQm9yZGVyIjogInJnYmEoMCwyNTUsMTUwLDAuNTUpIiwNCiAgICAgICAgInRodW1iU2l6ZSI6ICIyMHB4IiwNCiAgICAgICAgInRodW1iT2Zmc2V0IjogIjNweCIsDQogICAgICAgICJ0aHVtYkJnIjogIndoaXRlIiwNCiAgICAgICAgInRodW1iQWN0aXZlT2Zmc2V0IjogIjIycHgiLA0KICAgICAgICAidGh1bWJBY3RpdmVTY2FsZSI6ICIwLjkiLA0KICAgICAgICAidGh1bWJBY3RpdmVPcGFjaXR5IjogIjAuODUiDQogICAgICB9DQogICAgfSwNCiAgICAiaWNvbkJ1dHRvbiI6IHsNCiAgICAgICJiYWNrZ3JvdW5kIjogInJnYmEoMjU1LDI1NSwyNTUsMC4xKSIsDQogICAgICAiYmFja2dyb3VuZEhvdmVyIjogInJnYmEoMjU1LDI1NSwyNTUsMC4yKSIsDQogICAgICAiYmFja2dyb3VuZEFjdGl2ZSI6ICJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiLA0KICAgICAgImNvbG9yIjogIiNmZmZmZmYiLA0KICAgICAgImJvcmRlclJhZGl1cyI6ICI1MCUiLA0KICAgICAgImhvdmVyU2NhbGUiOiAiMS4xIiwNCiAgICAgICJhY3RpdmVTY2FsZSI6ICIwLjk1IiwNCiAgICAgICJzaXplcyI6IHsNCiAgICAgICAgInNtIjogMzIsDQogICAgICAgICJtZCI6IDUwLA0KICAgICAgICAibGciOiA3MA0KICAgICAgfSwNCiAgICAgICJpY29uUmF0aW8iOiAwLjYNCiAgICB9LA0KICAgICJzbGlkZXIiOiB7DQogICAgICAid2lkdGgiOiAiMjIwcHgiLA0KICAgICAgInRyYWNrSGVpZ2h0IjogIjRweCIsDQogICAgICAidHJhY2tCZyI6ICJyZ2JhKDI1NSwyNTUsMjU1LDAuMTUpIiwNCiAgICAgICJ0cmFja0JvcmRlciI6ICJyZ2JhKDI1NSwyNTUsMjU1LDAuMjUpIiwNCiAgICAgICJib3JkZXJSYWRpdXMiOiAiMjBweCIsDQogICAgICAidGh1bWJTaXplIjogIjIycHgiLA0KICAgICAgInRodW1iQmciOiAibGluZWFyLWdyYWRpZW50KDE0NWRlZywgcmdiYSgyNTUsMjU1LDI1NSwwLjMpLCByZ2JhKDI1NSwyNTUsMjU1LDAuMDUpKSIsDQogICAgICAiaG92ZXJTY2FsZSI6ICIxLjEiDQogICAgfQ0KICB9LA0KICAiY2hhcnQiOiB7DQogICAgInZhbHVlQ29sb3IiOiAiI2ZmZmZmZiIsDQogICAgImxlZ2VuZFZhbHVlQ29sb3IiOiAiI2ZmZmZmZiINCiAgfSwNCiAgInNwYWNpbmciOiB7DQogICAgIndpZGdldEdhcCI6ICIxMHB4Ig0KICB9DQp9DQo=", import.meta.url))).json();
+}
+export {
+  w as applyThemeToAllHosts,
+  c as applyVarsToHost,
+  n as cssVarsString,
+  N as default,
+  t as getTheme,
+  j as getThemeObject,
+  d as loadTheme,
+  e as setTheme,
+  Z as setThemeObject,
+  m as updateVar
+};

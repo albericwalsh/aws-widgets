@@ -291,16 +291,16 @@ Vous pouvez consommer directement le bundle publié dans `dist/` via jsDelivr (b
 - Import ES (module):
 
 ```html
-<script type="module">
-	import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4/dist/aws-widgets.es.js';
-	await initWidgets();
-</script>
+    <script type="module">
+    	import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4-dist/dist/aws-widgets.es.js';
+    	await initWidgets();
+    </script>
 ```
 
 - Script tag global (module):
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4/dist/aws-widgets.es.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4-dist/dist/aws-widgets.es.js"></script>
 <script>
 	// après inclusion, appeler la fonction exportée si nécessaire
 	// note: en mode module, importer est préférable
