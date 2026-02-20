@@ -96,6 +96,18 @@ await initWidgets();</code></pre>
         <h3>Publication</h3>
         <p>Les releases sont créées via un tag Git (`vX.Y.Z`). Le workflow CI build+attache les bundles à la Release. Voir <code>BUILD_PUBLISH.md</code> pour la procédure complète.</p>
 
+        <h3>Théming depuis d'autres projets</h3>
+        <p>Vous pouvez contrôler le thème des widgets depuis une application cliente (CDN ou npm). Exemple :</p>
+        <pre><code>// via CDN
+    import { initWidgets, setThemeObject, applyThemeToAllHosts, loadTheme } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4-dist/dist/aws-widgets.es.js';
+    await initWidgets();
+    setThemeObject({ '--aws-accent': '#ef4444', '--aws-foreground': '#0f1724' });
+    applyThemeToAllHosts();
+
+    // or load packaged theme
+    // const theme = await loadTheme(); setThemeObject(theme); applyThemeToAllHosts(theme);
+        </code></pre>
+
         <p class="readme-foot">Voir le README complet sur le dépôt pour plus de détails.</p>
     </div>
 </section>

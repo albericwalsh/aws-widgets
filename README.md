@@ -321,3 +321,51 @@ initWidgets();
 ```
 
 Remarque: la fonction d'initialisation est `initWidgets()` ; les widgets restent modulaires et peuvent être initialisés manuellement.
+
+---
+
+## Théming et intégration dans d'autres projets
+
+Vous pouvez piloter le thème des widgets depuis n'importe quel projet (CDN ou npm). Les utilitaires exposés permettent de définir les variables de thème partagées et d'appliquer ces variables sur les hôtes des composants.
+
+- Exemple via CDN (module ES) :
+
+```html
+<script type="module">
+	import { initWidgets, setThemeObject, applyThemeToAllHosts, cssVarsString, loadTheme } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4-dist/dist/aws-widgets.es.js';
+	// initialize widgets (if needed)
+	await initWidgets();
+
+	// simple: set theme variables programmatically
+	setThemeObject({
+		'--aws-accent': '#ef4444',
+		'--aws-foreground': '#0f1724',
+		'--aws-bg': 'rgba(255,255,255,0.95)'
+	});
+	// push inline variables to all existing widget hosts so they immediately update
+	applyThemeToAllHosts();
+
+	// load theme from packaged style.json (convenience helper)
+	// const theme = await loadTheme(); setThemeObject(theme); applyThemeToAllHosts(theme);
+
+	// advanced: get a CSS variables string to inject into an element/style
+	const cssText = cssVarsString({ '--aws-accent': '#7c3aed' });
+	document.documentElement.style.cssText += cssText;
+</script>
+```
+
+- Exemple via `npm` :
+
+```js
+import { initWidgets, setThemeObject, applyThemeToAllHosts } from 'aws-widgets';
+await initWidgets();
+setThemeObject({ '--aws-accent': '#06b6d4' });
+applyThemeToAllHosts();
+```
+
+Conseils pratiques
+
+- Préférez `setThemeObject` + `applyThemeToAllHosts` pour propager le thème aux instances déjà montées.
+- Utilisez `cssVarsString()` si vous devez injecter une chaîne CSS (par ex. pour un `<style>` ou pour envoyer le thème côté serveur).
+- `loadTheme()` lit le fichier `style.json` inclus dans le package et renvoie un objet utile pour `setThemeObject()`.
+
