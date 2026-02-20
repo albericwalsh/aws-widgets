@@ -1,7 +1,11 @@
-export function generateCSS(theme){
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()){
     const t = (theme && theme.widgets && theme.widgets['progress-circle']) || {};
-    return `
-        :host{ display:inline-block; --pc-size: 60px; --pc-color: ${t.color || 'var(--color-text-primary, #fff)'}; }
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+    return `:host{${cssVars}}\n        :host{ display:inline-block; --pc-size: 60px; --pc-color: ${t.color || 'var(--color-text-primary, #fff)'}; }
 
         .liquid-train{
             position: relative;

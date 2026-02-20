@@ -51,13 +51,16 @@ class AWSChartPie extends HTMLElement {
     const svgSlices = values.map((v,i)=>{
       const angle = (v/total)*360;
       const d = this._arcPath(cx, cy, r, start, start + angle);
-      const slice = `<path d="${d}" fill="${colors[i%colors.length]}" class="slice"></path>`;
+      // prefer CSS variable so theme can override; fall back to default palette color
+      const fallback = colors[i%colors.length];
+      const slice = `<path d="${d}" style="fill:var(--aws-accent, ${fallback})" class="slice"></path>`;
       start += angle;
       return slice;
     }).join('');
     const showValues = this.hasAttribute('show_values') && this.getAttribute('show_values') !== 'false';
     const legend = names.length ? '<div class="legend">' + names.map((n,i)=>{
-      const swatch = '<span class="legend-swatch" style="background:' + colors[i%colors.length] + '"></span>';
+      const fallback = colors[i%colors.length];
+      const swatch = '<span class="legend-swatch" style="background:var(--aws-accent, ' + fallback + ')"></span>';
       const label = '<span>' + escapeHtml(n) + '</span>';
       const val = showValues ? '<span class="legend-value">' + escapeHtml(String(values[i]||0)) + '</span>' : '';
       return '<div class="legend-item">' + swatch + label + val + '</div>';

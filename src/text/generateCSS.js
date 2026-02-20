@@ -1,4 +1,8 @@
-export function generateCSS(theme) {
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
     const t = (theme && theme.widgets && theme.widgets.title) || {};
     const fontFamily = String(t.fontFamily || 'inherit');
     const color = String(t.color || 'inherit');
@@ -15,7 +19,7 @@ export function generateCSS(theme) {
     parts.push('  flex-direction: column;');
     parts.push('  align-items: stretch;');
     parts.push('  font-family: ' + fontFamily + ';');
-    parts.push('  color: ' + color + ';');
+    parts.push('  color: var(--aws-foreground, ' + color + ');');
     parts.push('  margin: 0;');
     parts.push('  line-height: 1.3;');
     parts.push('  word-wrap: break-word;');
@@ -26,17 +30,17 @@ export function generateCSS(theme) {
     parts.push('.variant-heading { font-size: 1.6rem; font-weight: 700; }');
     parts.push('.variant-subheading { font-size: 1.25rem; font-weight: 600; }');
     parts.push('.variant-body { font-size: 1rem; font-weight: 400; }');
-    parts.push('.variant-caption { font-size: 0.85rem; font-weight: 400; color: rgba(255,255,255,0.7); }');
+    parts.push('.variant-caption { font-size: 0.85rem; font-weight: 400; color: var(--aws-muted, rgba(255,255,255,0.7)); }');
     parts.push('.variant-paragraph { font-size: 0.95rem; font-weight: 400; }');
 
     parts.push('/* colors */');
     parts.push('.color-default { color: inherit; }');
     parts.push('.color-muted { color: rgba(255,255,255,0.6); }');
-    parts.push('.color-primary { color: ' + primary + '; }');
-    parts.push('.color-secondary { color: ' + secondary + '; }');
-    parts.push('.color-success { color: #32ff8c; }');
-    parts.push('.color-warning { color: #ffb400; }');
-    parts.push('.color-danger { color: #ff4a4a; }');
+    parts.push('.color-primary { color: var(--aws-primary, ' + primary + '); }');
+    parts.push('.color-secondary { color: var(--aws-secondary, ' + secondary + '); }');
+    parts.push('.color-success { color: var(--aws-success, #32ff8c); }');
+    parts.push('.color-warning { color: var(--aws-warning, #ffb400); }');
+    parts.push('.color-danger { color: var(--aws-danger, #ff4a4a); }');
 
     parts.push('/* weight */');
     parts.push('.weight-light { font-weight: 300; }');
@@ -66,5 +70,7 @@ export function generateCSS(theme) {
     parts.push('.loader { display: none; margin-left: 8px; vertical-align: middle; }');
     parts.push(':host([loading]) .loader { display: inline-block; }');
 
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+    parts.unshift(`:host{${cssVars}}`);
     return parts.join('\n');
 }

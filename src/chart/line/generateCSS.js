@@ -1,5 +1,10 @@
-export function generateCSS(theme = {}) {
-  return `:host{display:block;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;max-width:100%;}
+import { getThemeObject, setThemeObject, cssVarsString } from '../../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
+  const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+  return `:host{${cssVars}}:host{display:block;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;max-width:100%;}
 .chart{width:100%;height:120px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;position:relative;box-sizing:border-box}
 .chart-title{font-size:12px;font-weight:600;text-align:center;margin:4px 0}
 .chart-inner{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0 8px}

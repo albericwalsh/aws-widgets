@@ -10,12 +10,20 @@ class SP_Input extends HTMLElement {
         this._renderRaf = null;
 
         const hostCss = `:host{display:inline-block}
-    .sp-input-wrapper{display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid transparent}
-    .sp-input-wrapper:hover,:host([mode="edit"]) .sp-input-wrapper{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.06)}
+    /* wrapper: no background by default (view), border transparent */
+    .sp-input-wrapper{display:inline-flex;align-items:center;gap:8px;padding:4px 8px;border-radius:999px;background:transparent;border:1px solid transparent}
+    /* on hover show background and subtle border (view hover) */
+    .sp-input-wrapper:hover{background:var(--aws-bg-hover, rgba(255,255,255,0.04));border-color:var(--aws-border, rgba(255,255,255,0.06))}
+    /* in edit mode show the same border as when input is focused (use --aws-border) */
+    :host([mode="edit"]) .sp-input-wrapper{border-color:var(--aws-border, rgba(100,150,255,0.9))}
+    /* when a child input is focused, match the focused border and shadow (use border-based vars) */
+    .sp-input-wrapper:focus-within{border-color:var(--aws-border, rgba(100,150,255,0.9));box-shadow:0 4px 14px var(--aws-border-shadow, rgba(100,150,255,0.08))}
     .sp-input-content{display:flex;align-items:center;gap:8px;min-width:80px}
-    .input{flex:0 1 220px;min-width:80px;max-width:520px;padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));color:#fff;font:inherit;font-size:0.95rem;outline:none}
-    .input:focus{border-color:rgba(100,150,255,0.9);box-shadow:0 4px 14px rgba(100,150,255,0.08)}
-    .output{padding:8px 10px;border-radius:12px;color:#fff}
+    /* icon buttons inside inputs should use the text color */
+    .sp-input-wrapper aws-icon-button, .sp-input-wrapper sp-icon-button{color:var(--aws-foreground, #fff)}
+    .input{flex:0 1 220px;min-width:80px;max-width:520px;padding:8px 12px;border-radius:12px;border:1px solid var(--aws-input-border, rgba(255,255,255,0.12));background:var(--aws-input-bg, linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)));color:var(--aws-foreground,#fff);font:inherit;font-size:0.95rem;outline:none}
+    .input:focus{border-color:var(--aws-border, rgba(100,150,255,0.9));box-shadow:0 4px 14px var(--aws-border-shadow, rgba(100,150,255,0.08))}
+    .output{padding:8px 10px;border-radius:12px;color:var(--aws-foreground,#fff)}
     `;
 
         const hostHtml = `<div class="sp-input-wrapper"><div class="sp-input-content" id="root"></div></div>`;

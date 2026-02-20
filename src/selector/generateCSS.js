@@ -1,7 +1,11 @@
-export function generateCSS(theme){
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()){
     const t = (theme && theme.widgets && theme.widgets.selector) || {};
-    return `
-        :host{display:block}
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+    return `:host{${cssVars}}\n        :host{display:block}
         .selector{
             display:inline-block;
             position:relative;
@@ -16,8 +20,8 @@ export function generateCSS(theme){
             gap:16px;
             padding:12px 20px;
             border-radius:var(--option-radius, 12px);
-            background:var(--option-bg, rgba(255,255,255,0.02));
-            color:var(--option-color, inherit);
+            background:var(--aws-bg, var(--option-bg, rgba(255,255,255,0.02)));
+            color:var(--aws-foreground, var(--option-color, inherit));
             cursor:pointer;
             min-width:220px;
             user-select:none;
@@ -38,7 +42,7 @@ export function generateCSS(theme){
             top:calc(100% + 8px);
             left:0;
             min-width:100%;
-            background:var(--option-bg, rgba(10,10,10,0.95));
+            background:var(--aws-bg, var(--option-bg, rgba(10,10,10,0.95)));
             border-radius:12px;
             box-shadow:0 12px 40px rgba(0,0,0,0.35);
             padding:8px;
@@ -58,11 +62,11 @@ export function generateCSS(theme){
             gap:12px;
             padding:10px 14px;
             border-radius:8px;
-            color:var(--option-color, inherit);
+            color:var(--aws-foreground, var(--option-color, inherit));
             cursor:pointer;
             transition: background .08s ease, transform .06s ease;
         }
-        .popup .item:hover, .popup .item:focus{ background: rgba(255,255,255,0.03); transform: translateY(-1px); }
+        .popup .item:hover, .popup .item:focus{ background: var(--option-hover-bg, rgba(255,255,255,0.03)); transform: translateY(-1px); }
 
         /* keep slotted options available in DOM but hide them visually */
         ::slotted(aws-option){ display:none; }

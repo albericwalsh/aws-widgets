@@ -1,5 +1,10 @@
-export function generateCSS(theme = {}) {
-  return `:host{display:block;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;max-width:100%;}
+import { getThemeObject, setThemeObject, cssVarsString } from '../../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
+  const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+  return `:host{${cssVars}}:host{display:block;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;max-width:100%;}
 .chart{width:100%;height:120px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;position:relative;box-sizing:border-box}
 .chart-title{font-size:12px;font-weight:600;text-align:center;margin:4px 0}
 .chart-inner{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0 8px}
@@ -11,6 +16,6 @@ rect{fill:var(--aws-accent,#10b981);opacity:0.8}
 .axis-y{position:absolute;left:4px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;font-size:11px}
 .data-label{font-size:10px;fill:var(--aws-muted,#6b7280)}
 .value-label{font-size:9px;fill:var(--aws-chart-value,#ffffff);text-anchor:middle}
-.chart-tooltip{position:absolute;pointer-events:none;padding:6px 8px;background:rgba(0,0,0,0.78);color:#fff;border-radius:6px;font-size:12px;white-space:nowrap;display:none;z-index:10;transition:opacity 0.08s ease}
+ .chart-tooltip{position:absolute;pointer-events:none;padding:6px 8px;background:var(--aws-bg, rgba(0,0,0,0.78));color:#fff;border-radius:6px;font-size:12px;white-space:nowrap;display:none;z-index:10;transition:opacity 0.08s ease}
 `;
 }

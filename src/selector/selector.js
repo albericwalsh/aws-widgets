@@ -1,4 +1,4 @@
-import { loadTheme } from "../utils/theme.js";
+import { loadTheme, getThemeObject } from "../utils/theme.js";
 import { generateCSS } from "./generateCSS.js";
 
 class SP_Selector extends HTMLElement{
@@ -207,6 +207,30 @@ class SP_Selector extends HTMLElement{
             }catch(e){}
             portal.appendChild(popup);
             document.body.appendChild(portal);
+            // apply current theme CSS variables to portal so :host rules copied into document work via vars
+            try{
+                const themeObj = getThemeObject();
+                Object.keys(themeObj).forEach(k=>{
+                    if(typeof themeObj[k] === 'string' && k.startsWith('aws-')){
+                        portal.style.setProperty('--' + k, themeObj[k]);
+                    }
+                });
+                // if the user applied an inline/background style to the selector host, propagate that
+                // to the portal so the popup keeps the same visible background.
+                try{
+                    const comp = window.getComputedStyle(this);
+                    const hostBg = comp.getPropertyValue('background-color') || comp.getPropertyValue('background');
+                    const hostBorderColor = comp.getPropertyValue('border-color');
+                    if(hostBg && hostBg.trim()){
+                        portal.style.setProperty('--aws-bg', hostBg.trim());
+                    }
+                    if(hostBorderColor && hostBorderColor.trim()){
+                        portal.style.setProperty('--aws-border', hostBorderColor.trim());
+                    }
+                    // also set an inline fallback on popup to ensure visibility if CSS vars fail
+                    try{ popup.style.background = hostBg && hostBg.trim() ? hostBg.trim() : popup.style.background; }catch(_){}
+                }catch(_){}
+            }catch(e){}
             this._portalEl = portal;
 
                 // hide the shadow popup while portal is visible to avoid duplication
@@ -224,16 +248,22 @@ class SP_Selector extends HTMLElement{
             // measure and flip if overflowing
             popup.style.visibility = 'hidden';
             const measure = ()=>{
+                const r = this._selectedEl.getBoundingClientRect();
+                top = r.bottom;
+                left = r.left;
                 const h = popup.offsetHeight;
                 if(top + h > window.innerHeight){
-                    top = rect.top - h;
+                    top = r.top - h;
                 }
                 portal.style.left = Math.max(4, left) + 'px';
                 portal.style.top = Math.max(4, top) + 'px';
                 popup.style.visibility = 'visible';
             };
-            // allow layout to settle
+            // allow layout to settle and also reposition on scroll/resize
             requestAnimationFrame(measure);
+            this._repositionHandler = ()=>{ try{ measure(); }catch(e){} };
+            window.addEventListener('scroll', this._repositionHandler, true);
+            window.addEventListener('resize', this._repositionHandler);
 
             this._selectedEl.setAttribute('aria-expanded','true');
             this._focusFirstItem();
@@ -259,6 +289,7 @@ class SP_Selector extends HTMLElement{
                 });
             }catch(e){}
             this._portalEl = null;
+            try{ if(this._repositionHandler){ window.removeEventListener('scroll', this._repositionHandler, true); window.removeEventListener('resize', this._repositionHandler); this._repositionHandler = null; } }catch(e){}
             try{ document.removeEventListener('click', this._onDocumentClick); }catch(e){}
             // ensure shadow popup is hidden too
             if(this._popupEl){

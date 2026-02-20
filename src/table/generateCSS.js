@@ -1,4 +1,8 @@
-export function generateCSS(theme) {
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
     // basic tokens can be extended via theme.widgets.table if present
     const t = (theme && theme.widgets && theme.widgets.table) || {};
     // generate per-column width rules up to N columns
@@ -7,8 +11,8 @@ export function generateCSS(theme) {
     for (let i = 1; i <= maxCols; i++) {
         colRules += `::slotted(aws-table-row) > aws-table-cell:nth-child(${i}){width:var(--col-${i}-width, auto);}`;
     }
-    return `
-        :host{display:block}
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
+    return `:host{${cssVars}}\n        :host{display:block}
         .table{
             display:table;
             position: relative;
@@ -17,8 +21,8 @@ export function generateCSS(theme) {
             border-spacing:0;
             border-radius:8px;
             overflow:hidden;
-            background:${t.background || "linear-gradient(145deg, rgba(26, 26, 26, 0.04), rgba(34, 34, 34, 0.04))"};
-            color:${t.color || "#fff"};font-family:${t.fontFamily || "Inter, Arial, sans-serif"};
+            background:var(--aws-bg, ${t.background || "linear-gradient(145deg, rgba(26, 26, 26, 0.04), rgba(34, 34, 34, 0.04))"});
+            color:var(--aws-foreground, ${t.color || "#fff"});font-family:${t.fontFamily || "Inter, Arial, sans-serif"};
             box-shadow:inset 0 0 12px rgba(0,0,0,0.06);
             table-layout:fixed
         }
@@ -26,7 +30,7 @@ export function generateCSS(theme) {
         /* slotted element basics (head/body/rows/cells are custom elements in light DOM) */
         ::slotted(aws-table-head){
             display:table-header-group;
-            background:${t.headerBg || "rgba(245,245,245,0.02)"};
+            background:var(--aws-header-bg, ${t.headerBg || "rgba(245,245,245,0.02)"});
             font-weight:600}
         ::slotted(aws-table-body){
             display:table-row-group;

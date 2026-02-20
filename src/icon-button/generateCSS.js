@@ -1,9 +1,13 @@
-export function generateCSS(theme) {
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
     const iconBtn = theme.widgets.iconButton;
     const btnTheme = theme.widgets.button || {};
 
-    return `
-        :host {
+    return `:host{${cssVars}}\n        :host {
             display: inline-block;
         }
 

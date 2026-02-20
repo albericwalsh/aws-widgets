@@ -1,8 +1,12 @@
-export function generateCSS(theme) {
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
     const bool = theme.widgets.bool;
 
-    return `
-        :host { display: inline-block; }
+    return `:host{${cssVars}}\n        :host { display: inline-block; }
 
         .bool-wrapper {
             display: flex;
@@ -19,20 +23,21 @@ export function generateCSS(theme) {
             border-radius: ${bool.view.borderRadius};
             font-size: ${bool.view.fontSize};
             font-weight: bold;
-            color: ${bool.view.color};
+            color: var(--aws-foreground, ${bool.view.color});
             text-align: center;
             opacity: 0.95;
             transition: all 0.25s ease;
         }
 
         .bool-view.on {
-            background: ${bool.view.onBg};
-            border: 1px solid ${bool.view.onBorder};
+            background: var(--aws-accent, ${bool.view.onBg});
+            border: 1px solid var(--aws-accent, ${bool.view.onBorder});
+            color: var(--aws-chart-value, var(--aws-foreground, ${bool.view.color}));
         }
 
         .bool-view.off {
-            background: ${bool.view.offBg};
-            border: 1px solid ${bool.view.offBorder};
+            background: var(--aws-bg, ${bool.view.offBg});
+            border: 1px solid var(--aws-border, ${bool.view.offBorder});
         }
 
         .bool-view.pulse {
@@ -49,8 +54,8 @@ export function generateCSS(theme) {
             width: ${bool.toggle.width};
             height: ${bool.toggle.height};
             border-radius: ${bool.toggle.borderRadius};
-            background: ${bool.toggle.bg};
-            border: 1px solid ${bool.toggle.border};
+            background: var(--aws-bg, ${bool.toggle.bg});
+            border: 1px solid var(--aws-border, ${bool.toggle.border});
             cursor: pointer;
             transition: background 0.3s ease, border-color 0.3s ease,
                         transform 0.25s ease, opacity 0.25s ease;
@@ -62,8 +67,8 @@ export function generateCSS(theme) {
         }
 
         .toggle.on {
-            background: ${bool.toggle.onBg};
-            border-color: ${bool.toggle.onBorder};
+            background: var(--aws-accent, ${bool.toggle.onBg});
+            border-color: var(--aws-accent, ${bool.toggle.onBorder});
         }
 
         .toggle .thumb {
@@ -72,7 +77,7 @@ export function generateCSS(theme) {
             left: ${bool.toggle.thumbOffset};
             width: ${bool.toggle.thumbSize};
             height: ${bool.toggle.thumbSize};
-            background: ${bool.toggle.thumbBg};
+            background: var(--aws-foreground, ${bool.toggle.thumbBg});
             border-radius: 50%;
             transition: transform 0.25s ease, opacity 0.25s ease;
         }
@@ -96,12 +101,12 @@ export function generateCSS(theme) {
 
         :host([disabled]) .toggle .thumb,
         .toggle[aria-disabled="true"] .thumb {
-            background: rgba(255,255,255,0.65);
+            background: var(--aws-muted, rgba(255,255,255,0.65));
         }
 
         :host([disabled]) .bool-view {
             opacity: 0.6;
-            color: rgba(255,255,255,0.65);
+            color: var(--aws-muted, rgba(255,255,255,0.65));
         }
     `;
 }

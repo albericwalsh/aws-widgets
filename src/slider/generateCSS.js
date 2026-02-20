@@ -1,8 +1,12 @@
-export function generateCSS(theme) {
+import { getThemeObject, setThemeObject, cssVarsString } from '../utils/theme.js';
+
+export { setThemeObject as setTheme };
+
+export function generateCSS(theme = getThemeObject()) {
+    const cssVars = cssVarsString(Object.assign({}, getThemeObject().cssVars || {}, (theme && theme.cssVars) || {}));
     const s = theme.widgets.slider;
 
-    return `
-        :host {
+    return `:host{${cssVars}}\n        :host {
             display: inline-block;
         }
 
@@ -11,7 +15,7 @@ export function generateCSS(theme) {
             width: ${s.width};
             /* stronger, more solid track while keeping smooth transitions */
             height: calc(${s.trackHeight} * 1.6);
-            background: ${s.trackBg};
+            background: var(--aws-bg, ${s.trackBg});
             border-radius: ${s.borderRadius};
             cursor: pointer;
             border: 1px solid ${s.trackBorder};
@@ -26,7 +30,7 @@ export function generateCSS(theme) {
             width: calc(${s.thumbSize} * 1.15);
             height: calc(${s.thumbSize} * 1.15);
             border-radius: 50%;
-            background: ${s.thumbBg};
+            background: var(--aws-bg, ${s.thumbBg});
             cursor: pointer;
             transition: transform 0.18s ease, box-shadow 0.18s ease;
             border: none;
@@ -43,7 +47,7 @@ export function generateCSS(theme) {
             width: calc(${s.thumbSize} * 1.15);
             height: calc(${s.thumbSize} * 1.15);
             border-radius: 50%;
-            background: ${s.thumbBg};
+            background: var(--aws-bg, ${s.thumbBg});
             border: none;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.35);
