@@ -30,9 +30,10 @@
     .readme-content code{color:#cfe8ff}
     .readme-foot{opacity:0.85;font-size:0.9rem}
     </style>
-    <!-- For testing CDN import in demo dev: import specific release from jsDelivr -->
+    <!-- For demo: import the built bundle from CDN (tagged release) -->
     <script type="module">
-        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.3/dist/aws-widgets.es.js';
+        // Use the released bundle on jsDelivr for the demo. Update tag when releasing.
+        import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4/dist/aws-widgets.es.js';
         await initWidgets();
         window.awsWidgetsReady = true;
     </script>
@@ -44,6 +45,28 @@
     <p>Collection de Web Components réutilisables</p>
 </header>
 
+<!-- Interactive theme demo -->
+<section id="theme-demo" style="max-width:980px;margin:12px auto;padding:12px;background:linear-gradient(180deg,#071027, #051322);border-radius:10px;color:#e6eef8;display:flex;gap:12px;align-items:center;">
+    <div style="flex:1">
+        <strong>Thème interactif</strong>
+        <p style="margin:6px 0 0 0;opacity:0.85">Changez les couleurs ci-dessous pour voir l'effet sur les widgets.</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Accent</span><input id="theme-accent" type="color" value="#10b981"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Muted</span><input id="theme-muted" type="color" value="#6b7280"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Chart value</span><input id="theme-chart-value" type="color" value="#ffffff"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Text</span><input id="theme-text" type="color" value="#ffffff"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Subtext</span><input id="theme-subtext" type="color" value="#bfbfbf"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Border</span><input id="theme-border" type="color" value="#e6eef8"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Background</span><input id="theme-bg" type="color" value="#ffffff"></label>
+        <label style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px">Alpha</span><input id="theme-bg-alpha" type="range" min="0" max="1" step="0.01" value="0.25"></label>
+        <button id="apply-theme" class="readme-toggle">Appliquer</button>
+        <button id="recreate-hosts" class="readme-toggle" title="Recreate all widget hosts">Recréer</button>
+        <button id="diagnose-theme" class="readme-toggle" title="Diagnostiquer les widgets">Diagnostiquer</button>
+        <label style="display:flex;align-items:center;gap:8px"><input id="theme-apply-round" type="checkbox"> <span style="font-size:12px">Appliquer au 'rond' (favicon/swatches)</span></label>
+    </div>
+</section>
+
 <!-- Documentation panel (stylised README) -->
 <section id="readme-panel" class="readme-panel">
     <button id="readme-toggle" class="readme-toggle">📚 Documentation</button>
@@ -53,7 +76,7 @@
 
         <h3>Installation</h3>
         <p>Via CDN (jsDelivr) — stable via tag : </p>
-        <pre><code>import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.3/dist/aws-widgets.es.js';
+        <pre><code>import { initWidgets } from 'https://cdn.jsdelivr.net/gh/albericwalsh/aws-widgets@v0.1.4/dist/aws-widgets.es.js';
         await initWidgets();
         window.awsWidgetsReady = true;</code></pre>
 
@@ -122,6 +145,212 @@ await initWidgets();</code></pre>
         });
     })();
 </script>
+
+    <script type="module">
+        // Interactive theme controls: apply CSS vars on document root and update theme module
+        import { setThemeObject, applyThemeToAllHosts } from './src/utils/theme.js';
+
+        const accent = document.getElementById('theme-accent');
+        const muted = document.getElementById('theme-muted');
+        const chartVal = document.getElementById('theme-chart-value');
+        const textColor = document.getElementById('theme-text');
+        const borderColor = document.getElementById('theme-border');
+        const bgColor = document.getElementById('theme-bg');
+        const bgAlpha = document.getElementById('theme-bg-alpha');
+        const applyBtn = document.getElementById('apply-theme');
+
+        function applyThemeFromControls() {
+            function hexToRgb(hex) {
+                if (!hex) return null;
+                const h = hex.replace('#', '').trim();
+                if (h.length === 3) {
+                    return [parseInt(h[0]+h[0],16), parseInt(h[1]+h[1],16), parseInt(h[2]+h[2],16)];
+                }
+                if (h.length === 6) {
+                    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+                }
+                return null;
+            }
+            const alpha = parseFloat((bgAlpha && bgAlpha.value) || 1);
+            const rgb = hexToRgb(bgColor.value);
+            const bgCss = (rgb && alpha < 1) ? `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})` : bgColor.value;
+
+            const vars = {
+                '--aws-accent': accent.value,
+                '--aws-muted': muted.value,
+                '--aws-chart-value': chartVal.value,
+                '--aws-foreground': textColor.value,
+                '--aws-border': borderColor.value,
+                '--aws-bg': bgCss,
+                '--aws-button-bg': bgCss
+            };
+            // Apply to document root so global styles pick it up
+            Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+            // Also update internal theme object for future widget generation
+            try { setThemeObject(vars); } catch (e) { /* ignore if not available */ }
+            // Force-update existing widget hosts by setting inline CSS vars on each host
+            try {
+                const updated = applyThemeToAllHosts(vars);
+                console.info('applyThemeFromControls: applyThemeToAllHosts returned', updated);
+                    // optionally apply to round-like elements (favicons, swatches) if checkbox set
+                    try {
+                        const applyRound = document.getElementById('theme-apply-round');
+                        if (applyRound && applyRound.checked) {
+                            try {
+                                applyToRoundElements(vars);
+                            } catch (e) { console.warn('applyToRoundElements failed', e); }
+                        }
+                    } catch(e){}
+                // diagnostic: inspect first few hosts to see computed custom property and sample fill
+                try {
+                    const hosts = Array.from(document.querySelectorAll('*')).filter(e => e.tagName && e.tagName.startsWith('AWS-')).slice(0, 12);
+                    hosts.forEach((h, idx) => {
+                        try {
+                            const inline = h.style && h.style.getPropertyValue ? h.style.getPropertyValue('--aws-accent') : '';
+                            const compHost = getComputedStyle(h).getPropertyValue('--aws-accent');
+                            console.debug(`host[${idx}]`, h.tagName, 'inline--aws-accent=', inline, 'computed--aws-accent=', compHost);
+                            // attempt to read an inner SVG fill if present
+                            try {
+                                const inner = (h.shadowRoot && (h.shadowRoot.querySelector('svg rect') || h.shadowRoot.querySelector('svg path'))) || h.querySelector && (h.querySelector('svg rect') || h.querySelector('svg path'));
+                                if (inner) {
+                                    const fillComp = getComputedStyle(inner).getPropertyValue('fill') || inner.getAttribute('fill') || inner.style && inner.style.fill;
+                                    console.debug('  sample inner element:', inner.tagName, 'fill computed/attr/style =', fillComp);
+                                }
+                            } catch(e){}
+                        } catch(e){}
+                    });
+                } catch(e){}
+            } catch (e) { /* ignore */ }
+        }
+
+        applyBtn.addEventListener('click', () => applyThemeFromControls());
+
+        // Recreate widget hosts: remove and re-insert custom element instances so they re-run construction
+        const recreateBtn = document.getElementById('recreate-hosts');
+        function recreateAllHosts() {
+            try {
+                const container = document.getElementById('widget-showcase');
+                if (!container) return 0;
+                const wrappers = Array.from(container.querySelectorAll('.widget-item'));
+                let count = 0;
+                wrappers.forEach(wrapper => {
+                    const old = wrapper.firstElementChild;
+                    if (!old || !old.tagName) return;
+                    const tag = old.tagName.toLowerCase();
+                    try {
+                        const neu = document.createElement(tag);
+                        // copy attributes
+                        for (const attr of Array.from(old.attributes || [])) {
+                            neu.setAttribute(attr.name, attr.value);
+                        }
+                        // copy light DOM content
+                        neu.innerHTML = old.innerHTML;
+                        wrapper.replaceChild(neu, old);
+                        count++;
+                    } catch (e) {
+                        console.warn('recreateAllHosts: failed for', old.tagName, e);
+                    }
+                });
+                console.info('recreateAllHosts: recreated', count, 'hosts');
+                return count;
+            } catch (e) { console.error(e); return 0; }
+        }
+
+        if (recreateBtn) recreateBtn.addEventListener('click', () => recreateAllHosts());
+
+        // Diagnostic: inspect AWS- hosts to verify CSS vars applied and detect hard-coded fills
+        const diagnoseBtn = document.getElementById('diagnose-theme');
+        function diagnoseHosts() {
+            const hosts = Array.from(document.querySelectorAll('*')).filter(e => e.tagName && e.tagName.startsWith('AWS-'));
+            console.info('diagnoseHosts: found', hosts.length, 'hosts');
+            hosts.forEach((h, idx) => {
+                try {
+                    const tag = h.tagName;
+                    const inlineAccent = h.style && h.style.getPropertyValue ? h.style.getPropertyValue('--aws-accent') : '';
+                    const compAccent = getComputedStyle(h).getPropertyValue('--aws-accent');
+                    const sample = { tag, inlineAccent, compAccent };
+                    // inspect shadowRoot children (if any) for SVG/path/rect with fill attr/style
+                    const candidates = [];
+                    try {
+                        const shadowNodes = h.shadowRoot ? Array.from(h.shadowRoot.querySelectorAll('svg path, svg rect, svg circle, [style], [fill], [stroke]')) : [];
+                        const lightNodes = Array.from(h.querySelectorAll ? h.querySelectorAll('svg path, svg rect, svg circle, [style], [fill], [stroke]') : []);
+                        const nodes = shadowNodes.concat(lightNodes).slice(0,8);
+                        nodes.forEach(n => {
+                            const nodeInfo = {
+                                tag: n.tagName,
+                                attrFill: n.getAttribute && n.getAttribute('fill'),
+                                attrStroke: n.getAttribute && n.getAttribute('stroke'),
+                                inlineStyle: n.getAttribute && n.getAttribute('style'),
+                                styleFill: n.style && n.style.fill,
+                                computedFill: getComputedStyle(n).getPropertyValue('fill')
+                            };
+                            candidates.push(nodeInfo);
+                        });
+                    } catch(e){}
+                    console.debug('host['+idx+']', sample, 'sample children:', candidates);
+                } catch(e){ console.error('diagnoseHosts: host check failed', e); }
+            });
+            return hosts.length;
+        }
+
+        if (diagnoseBtn) diagnoseBtn.addEventListener('click', () => diagnoseHosts());
+
+        // Apply theme to round-like elements (favicons/swatches). Only updates elements that already have
+        // a non-transparent background/border/fill so we don't create visuals where none existed.
+        function applyToRoundElements(vars = {}) {
+            const sel = ['.favicon', '.swatch', '.round', 'circle', 'ellipse', 'rect'];
+            const elements = [];
+            // collect from light DOM
+            sel.forEach(s => elements.push(...Array.from(document.querySelectorAll(s))));
+            // collect from shadowRoots of aws hosts
+            const hosts = Array.from(document.querySelectorAll('*')).filter(e => e.tagName && e.tagName.startsWith('AWS-'));
+            hosts.forEach(h => {
+                try {
+                    if (!h.shadowRoot) return;
+                    sel.forEach(s => elements.push(...Array.from(h.shadowRoot.querySelectorAll(s))));
+                } catch(e){}
+            });
+
+            const bgVal = vars['--aws-bg'] || vars['--aws-button-bg'];
+            const borderVal = vars['--aws-border'];
+            const fgVal = vars['--aws-foreground'];
+
+            let count = 0;
+            elements.forEach(el => {
+                try {
+                    const cs = getComputedStyle(el);
+                    // background
+                    const bg = cs && (cs.backgroundColor || cs['background-color']);
+                    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && bgVal) {
+                        el.style.background = bgVal;
+                        count++;
+                    }
+                    // border
+                    const bcol = cs && (cs.borderColor || cs['border-color']);
+                    if (bcol && bcol !== 'rgba(0, 0, 0, 0)' && bcol !== 'transparent' && borderVal) {
+                        el.style.borderColor = borderVal;
+                    }
+                    // SVG fill/stroke or element color
+                    if (el instanceof SVGElement || ['circle','ellipse','rect'].includes(el.tagName && el.tagName.toLowerCase())) {
+                        const fillAttr = el.getAttribute && el.getAttribute('fill');
+                        const compFill = cs && cs.fill;
+                        if ((fillAttr && fillAttr !== 'none') || (compFill && compFill !== 'none' && compFill !== 'rgba(0, 0, 0, 0)')) {
+                            if (fgVal) el.style.fill = fgVal;
+                        }
+                    } else {
+                        // non-svg: apply text color if present
+                        const color = cs && cs.color;
+                        if (color && color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent' && fgVal) el.style.color = fgVal;
+                    }
+                } catch(e) {}
+            });
+            console.info('applyToRoundElements: updated', count, 'elements');
+            return count;
+        }
+
+        // Apply on load so demo shows current values
+        window.addEventListener('load', () => applyThemeFromControls());
+    </script>
 
 <script>
 // Toggle readme panel

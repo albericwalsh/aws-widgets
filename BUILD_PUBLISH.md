@@ -5,7 +5,8 @@ Goal: produce stable releases and publish artifacts without committing built fil
 1) Prepare a release
 - Bump version in `package.json` (e.g. from `0.1.0` → `0.1.1`).
 - Update `CHANGELOG.md` (optional).
-- Commit your changes: `git add package.json CHANGELOG.md && git commit -m "chore(release): v0.1.1"`.
+- Update demo and docs: update `index.html` and `README.md` to reference the new tag (e.g. `vX.Y.Z`) so the demo uses the released bundle, then include those files in the release commit.
+- Commit your changes: `git add package.json CHANGELOG.md index.html README.md && git commit -m "chore(release): v0.1.1"`.
 
 2) Create a tag and push it
 - Create an annotated tag and push it:
