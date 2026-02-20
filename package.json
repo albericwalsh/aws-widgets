@@ -1,6 +1,6 @@
 {
   "name": "aws-widgets",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "description": "Bibliothèque de Web Components réutilisables (AWS-style widgets).",
   "main": "dist/aws-widgets.cjs.js",
